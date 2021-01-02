@@ -150,6 +150,7 @@
 
 <script>
 import vue2Dropzone from 'vue2-dropzone'
+import Swal from "sweetalert2";
 export default {
   components: {
     vueDropzone: vue2Dropzone
@@ -211,6 +212,8 @@ export default {
   mounted() {
     this.id = this.$route.params.id
     this.getRecord()
+    this.changeStatus('published')
+    this.changeStatus('featured')
   },
 
   methods: {
@@ -230,39 +233,47 @@ export default {
 
     updateRecord() {
       this.loading = true
-
-      this.$axios({
-        method: 'get',
-        url: this.model + '/' + this.id + '/update',
-        data: {
-          name_ar: this.name_ar,
-          name_en: this.name_en,
-          meta_title: this.meta_title,
-          meta_description: this.meta_desc,
-          active: this.published,
-          in_home: this.featured,
-        }
+      this.$axios.put(this.model + '/' + this.id + '/update', {
+        name_ar: this.name_ar,
+        name_en: this.name_en,
+        meta_title: this.meta_title,
+        meta_description: this.meta_desc,
+        active: this.published,
+        in_home: this.featured,
+        logo: this.photo
       })
-      //
-      // this.$axios.put(this.model + '/' + this.id + '/update', {
-      //   name_ar: this.name_ar,
-      //   name_en: this.name_en,
-      //   meta_title: this.meta_title,
-      //   meta_description: this.meta_desc,
-      //   active: this.published,
-      //   in_home: this.featured,
-      // })
         .then(response => {
           if (response.data.status === 200) {
             this.loading = false
+            Swal.fire({
+              position: 'top-end',
+              icon: 'success',
+              title: 'Your work has been saved',
+              showConfirmButton: false,
+              timer: 1500
+            })
             this.$router.push('/ecommerce/brands')
           } else {
             this.error_message = response.data.message
-            console.log(this.error_message);
+            Swal.fire({
+              position: 'top-end',
+              icon: 'error',
+              title: 'Oops...',
+              text: response.data.message,
+              showConfirmButton: true,
+              timer: 5000
+            })
           }
 
-        }).catch((error) => {
-        console.log(error);
+        }).catch((error, code) => {
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: error,
+          footer: '<a href>Why do I have this issue?</a>'
+        })
+
+        console.log(error.code, code);
       })
     },
 

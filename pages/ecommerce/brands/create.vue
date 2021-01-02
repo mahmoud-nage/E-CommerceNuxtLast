@@ -151,6 +151,7 @@
 
 <script>
 import vue2Dropzone from 'vue2-dropzone'
+import Swal from "sweetalert2";
 export default {
   components: {
     vueDropzone: vue2Dropzone
@@ -158,7 +159,7 @@ export default {
   data: () => ({
     valid: true,
     loading: true,
-    model: "banks",
+    model: "brands",
     title: 'Create Brands',
     publishedText: "text-success",
     featuredText: "text-muted",
@@ -214,23 +215,36 @@ export default {
         this.imageTextColor = "text-danger";
       }else{
       this.loading = true,
-        this.$axios.post("https://almurafiq.dev-krito.com/api/" + this.model + '/store', {
-          bank_name_ar: this.name_ar,
-          bank_name_en: this.name_ar,
-          branch_name_ar: this.name_ar,
-          branch_name_en: this.name_ar,
-          owner_name_ar: this.name_ar,
-          owner_name_en: this.name_ar,
-          account_num: this.name_ar,
-          swift_num: this.name_ar,
-          image: this.photo
+        this.$axios.post(this.model + '/store', {
+          name_ar: this.name_ar,
+          name_en: this.name_en,
+          meta_title: this.meta_title,
+          meta_description: this.meta_desc,
+          active: this.published,
+          in_home: this.featured,
+          logo: this.photo
         })
           .then(response => {
-            if (response.data.status == '500') {
-              this.error_message = 'email is Repeated'
-            } else {
+            if (response.data.status === 200) {
               this.loading = false
+              Swal.fire({
+                position: 'top-end',
+                icon: 'success',
+                title: 'Your work has been saved',
+                showConfirmButton: false,
+                timer: 1500
+              })
               this.$router.push('/ecommerce/brands')
+            } else {
+              this.error_message = response.data.message
+              Swal.fire({
+                position: 'top-end',
+                icon: 'error',
+                title: 'Oops...',
+                text: response.data.message,
+                showConfirmButton: true,
+                timer: 5000
+              })
             }
 
           }).catch((error) => {
