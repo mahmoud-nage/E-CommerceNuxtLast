@@ -95,8 +95,26 @@
                   >{{ name_en }}
                   </v-textarea>
                 </v-col>
-                <v-col sm="8"></v-col>
-                <v-col
+                <v-col sm="6">
+                  <b-form-select
+                    v-model="cat_id"
+                    size="sm"
+                    :options="categories"
+                    :label="$t('forms.general.Categories')"
+                    disabled-field="selected"
+                  ></b-form-select>&nbsp;
+                </v-col>
+                <v-col sm="6">
+                  <b-form-select
+                    v-model="parent_id"
+                    size="sm"
+                    :options="subCategories"
+                    :label="$t('forms.general.subCategories')"
+                    disabled-field="selected"
+                  ></b-form-select>&nbsp;
+                </v-col>
+                <v-col sm="6"></v-col>
+                  <v-col
                   cols="6"
                   sm="2"
                 >
@@ -125,6 +143,19 @@
                   </b-form-checkbox>
                 </v-col>
                 <v-col
+                  cols="6"
+                  sm="2"
+                >
+                  <b-form-checkbox v-model="in_nav"
+                                   switch
+                                   size="sm"
+                                   inline
+                                   @change="changeStatus('in_nav')"
+                  >
+                    <div><strong :class="in_navText">{{ $t('forms.general.in_nav') }}</strong></div>
+                  </b-form-checkbox>
+                </v-col>
+                <v-col
                   cols="12"
                   md="12">
                   <b-button class="btn-rounded ml-1 text-white" @click="validate" variant="success"><span
@@ -150,6 +181,8 @@
 
 <script>
 import vue2Dropzone from 'vue2-dropzone'
+import Swal from "sweetalert2";
+
 export default {
   components: {
     vueDropzone: vue2Dropzone
@@ -157,20 +190,27 @@ export default {
   data: () => ({
     valid: true,
     loading: true,
-    model: "banks",
-    title: 'Create Brands',
+    lang: 'ar',
+    model: "subSubCategories",
+    title: "Create Sub Sub Categories",
     publishedText: "text-success",
     featuredText: "text-muted",
+    in_navText: "text-muted",
+    categories: [],
+    subCategories: [],
+    parent_id: 0,
+    cat_id: 0,
+
     items: [{
       text: 'Dashboard',
       href: '/',
     },
       {
-        text: 'Brands',
-        href: '/ecommerce/brands',
+        text: 'Categories',
+        href: '/ecommerce/subSubCategories',
       },
       {
-        text: 'create',
+        text: 'Edit',
         active: true,
       },
     ],
@@ -197,7 +237,7 @@ export default {
     ],
 
     keywordRules: [
-      v => !!v || 'Title Arabic is required',
+      v => !!v || 'Description Arabic is required',
       v => (v && v.length <= 190) || 'Name Arabic must be less than 190 characters',
     ],
     descRules: [
@@ -205,56 +245,158 @@ export default {
     ],
     published: true,
     featured: false,
+    in_nav: false,
     id: "",
   }),
 
   mounted() {
     this.id = this.$route.params.id
     this.getRecord()
+    this.getCategories()
+    this.getSubCategories()
   },
-
 
   methods: {
     getRecord() {
-      this.$axios.get('/' + this.model + '/' + this.id + '/edit')
+      this.$axios.get(this.model + '/' + this.id)
         .then(response => {
-          this.article = response.data.data
-          this.title_en = this.article.title_en
-          this.title_ar = this.article.title_ar
-          this.description_en = this.article.description_en
-          this.description_ar = this.article.description_ar
-          this.sub_description_ar = this.article.sub_description_ar
-          this.sub_description_en = this.article.sub_description_en
-          this.video_url = this.article.video ? this.article.video : ''
+          if (response.data.status === 200) {
+            console.log('sub');
+            this.record = response.data.data
+            this.name_ar = this.record.name_ar
+            this.name_en = this.record.name_en
+            this.meta_title = this.record.meta_title
+            this.meta_desc = this.record.meta_description
+            this.published = this.record.active ? true : false
+            this.featured = this.record.in_home ? true : false
+            this.in_nav = this.record.in_nav ? true : false
+            this.parent_id = this.record.parent_id
+          } else {
+            this.error_message = response.data.message
+            Swal.fire({
+              position: 'top-end',
+              icon: 'error',
+              title: 'Oops...',
+              text: response.data.message,
+              showConfirmButton: true,
+              timer: 5000
+            })
+          }
+        }).catch((error, code) => {
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: error,
         })
+      })
+    },
+    getCategories() {
+      this.$axios.get('categories?to=-1', {
+        headers: {
+          'lang': 'ar'
+        }
+      }).then((response) => {
+        var allCategories = response.data.data;
+        // console.log(response.data.data, this.allCategories.length, this.allCategories);
+        for (var i = 0; i < allCategories.length; i++) {
+          if (this.cat_id === allCategories[i].id) {
+            this.categories.push({
+              'value': allCategories[i].id,
+              'text': this.lang == 'ar' ? allCategories[i].name_ar : allCategories[i].name_en,
+              'selected': true,
+            })
+          } else {
+            this.categories.push({
+              'value': allCategories[i].id,
+              'text': this.lang == 'ar' ? allCategories[i].name_ar : allCategories[i].name_en
+            })
+          }
+        }
+
+      }).catch((error) => {
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: error,
+        })
+      });
+    },
+    getSubCategories(){
+      this.$axios.get('subCategories?category_id='+this.cat_id+'&to=-1', {
+        headers:{
+          'lang': 'ar'
+        }
+      }).then((response) => {
+        this.allSubCategories = response.data.data;
+        for (var i = 0; i < this.allSubCategories.length; i++) {
+          if (this.parent_id === this.allSubCategories[i].id) {
+            this.subCategories.push({
+              'value': this.allSubCategories[i].id,
+              'text': this.lang == 'ar' ? this.allSubCategories[i].name_ar : this.allSubCategories[i].name_en,
+              'selected': true,
+            })
+          } else {
+            this.subCategories.push({
+              'value': this.allSubCategories[i].id,
+              'text': this.lang == 'ar' ? this.allSubCategories[i].name_ar : this.allSubCategories[i].name_en
+            })
+          }
+        }
+
+      }).catch((error) => {
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: error,
+        })
+      });
     },
 
     updateRecord() {
-      console.log(this.name_ar);
       this.loading = true
-      this.$axios.put("https://almurafiq.dev-krito.com/api/" + this.model + '/' +  + '/store', {
-        bank_name_ar: this.name_ar,
-        bank_name_en: this.name_ar,
-        branch_name_ar: this.name_ar,
-        branch_name_en: this.name_ar,
-        owner_name_ar: this.name_ar,
-        owner_name_en: this.name_ar,
-        account_num: this.name_ar,
-        swift_num: this.name_ar
+      this.$axios.put(this.model + '/' + this.id + '/update', {
+        name_ar: this.name_ar,
+        name_en: this.name_en,
+        meta_title: this.meta_title,
+        meta_description: this.meta_desc,
+        active: this.published,
+        in_home: this.featured,
+        in_nav: this.in_nav,
+        parent_id: this.parent_id,
+        type: 2,
+        image: this.photo
       })
         .then(response => {
-          if (response.data.status == '500') {
-            this.error_message = 'email is Repeated'
-          } else {
+          if (response.data.status === 200) {
             this.loading = false
-            this.$router.push('/ecommerce/brands')
+            Swal.fire({
+              position: 'top-end',
+              icon: 'success',
+              title: 'Your work has been saved',
+              showConfirmButton: false,
+              timer: 1500
+            })
+            this.$router.push('/ecommerce/' + this.model)
+          } else {
+            this.error_message = response.data.message
+            Swal.fire({
+              position: 'top-end',
+              icon: 'error',
+              title: 'Oops...',
+              text: response.data.message,
+              showConfirmButton: true,
+              timer: 5000
+            })
           }
 
-        }).catch((error) => {
-        console.log(error);
+        }).catch((error, code) => {
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: error,
+        })
       })
     },
-
     changeStatus(el) {
       if (el === 'published') {
         if (this.published) {
@@ -268,9 +410,14 @@ export default {
         } else {
           this.featuredText = "text-muted";
         }
+      } else if (el === 'in_nav') {
+        if (this.in_nav) {
+          this.in_navText = "text-success";
+        } else {
+          this.in_navText = "text-muted";
+        }
       }
     },
-
     onFileChange(e) {
       console.log('file changes');
       var files = e.target.files || e.dataTransfer.files;
@@ -291,7 +438,6 @@ export default {
       };
       reader.readAsDataURL(file)
     },
-
     setMetaData(from) {
       if (from === 1) {
         this.meta_desc = this.name_en;
@@ -301,22 +447,18 @@ export default {
         this.meta_title = this.name_en;
       }
     },
-
     validate() {
       if (this.$refs.form.validate()) {
         this.loading = true;
-        this.createRecord()
+        this.updateRecord()
       }
     },
-
     reset() {
       this.$refs.form.reset()
     },
-
     resetValidation() {
       this.$refs.form.resetValidation()
     },
-
   }
 }
 </script>

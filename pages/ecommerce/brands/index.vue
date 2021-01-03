@@ -7,20 +7,17 @@
           <div class="card-body">
             <div class="row mb-2">
               <div class="col-sm-6">
-
                 <b-button class="btn-rounded ml-1 text-white" variant="success" to="/ecommerce/brands/create" dark><span
                   class="btn-label"><i class="mdi mdi-plus"></i></span>{{ $t('Create') }}
                 </b-button>
-
-
               </div>
               <div class="col-sm-6">
                 <div class="float-sm-right">
 
-                  <b-button class="btn-rounded ml-1 text-white" variant="warning"><span
+                  <b-button class="btn-rounded ml-1 text-white" variant="warning" ><span
                     class="btn-label"><i class="mdi mdi-export-variant"></i></span>{{ $t('Export') }}
                   </b-button>
-                  <b-button class="btn-rounded ml-1 text-white" variant="info" to=""><span
+                  <b-button class="btn-rounded ml-1 text-white" variant="info" ><span
                     class="btn-label"><i class="mdi mdi-filter-menu-outline"></i></span>{{ $t('Filter') }}
                   </b-button>
                 </div>
@@ -32,7 +29,6 @@
                   <label class="d-inline-flex align-items-center">
                     Display&nbsp;
                     <b-form-select v-model="perPage" size="sm" :options="pageOptions" @change="getData(currentPage)">
-
                     </b-form-select>&nbsp;{{model}}
                   </label>
                 </div>
@@ -291,7 +287,7 @@ export default {
             this.count2.push(i)
           }
         }
-      }).catch((error, code) => {
+      }).catch((error) => {
         Swal.fire({
           icon: 'error',
           title: 'Oops...',
@@ -299,7 +295,6 @@ export default {
         })
       });
     },
-
 
     nextStep(e) {
       e.preventDefault();
@@ -312,6 +307,16 @@ export default {
       }
     },
     prevStep(e) {
+      e.preventDefault();
+      if (this.stepIndex > 1) {
+        this.stepIndex--;
+        this.getData(this.stepIndex)
+      }
+      if (this.stepIndex == 1) {
+        this.prev = true
+      }
+    },
+    export(e) {
       e.preventDefault();
       if (this.stepIndex > 1) {
         this.stepIndex--;

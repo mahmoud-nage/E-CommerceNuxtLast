@@ -171,7 +171,7 @@ export default {
         href: '/ecommerce/brands',
       },
       {
-        text: 'create',
+        text: 'Edit',
         active: true,
       },
     ],
@@ -198,7 +198,7 @@ export default {
     ],
 
     keywordRules: [
-      v => !!v || 'Title Arabic is required',
+      v => !!v || 'Description Arabic is required',
       v => (v && v.length <= 190) || 'Name Arabic must be less than 190 characters',
     ],
     descRules: [

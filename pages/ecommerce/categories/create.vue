@@ -95,7 +95,7 @@
                   >{{ name_en }}
                   </v-textarea>
                 </v-col>
-                <v-col sm="8"></v-col>
+                <v-col sm="6"></v-col>
                 <v-col
                   cols="6"
                   sm="2"
@@ -125,6 +125,19 @@
                   </b-form-checkbox>
                 </v-col>
                 <v-col
+                  cols="6"
+                  sm="2"
+                >
+                  <b-form-checkbox v-model="in_nav"
+                                   switch
+                                   size="sm"
+                                   inline
+                                   @change="changeStatus('in_nav')"
+                  >
+                    <div><strong :class="in_navText">{{ $t('forms.general.in_nav') }}</strong></div>
+                  </b-form-checkbox>
+                </v-col>
+                <v-col
                   cols="12"
                   md="12">
                   <b-button class="btn-rounded ml-1 text-white" @click="validate" variant="success"><span
@@ -151,6 +164,8 @@
 
 <script>
 import vue2Dropzone from 'vue2-dropzone'
+import Swal from "sweetalert2";
+
 export default {
   components: {
     vueDropzone: vue2Dropzone
@@ -158,17 +173,18 @@ export default {
   data: () => ({
     valid: true,
     loading: true,
-    model: "banks",
-    title: 'Create Brands',
+    model: "categories",
+    title: 'Create Categories',
     publishedText: "text-success",
     featuredText: "text-muted",
+    in_navText: "text-muted",
     items: [{
       text: 'Dashboard',
       href: '/',
     },
       {
-        text: 'Brands',
-        href: '/ecommerce/brands',
+        text: 'Categories',
+        href: '/ecommerce/categories',
       },
       {
         text: 'create',
@@ -206,31 +222,48 @@ export default {
     ],
     published: true,
     featured: false,
+    in_nav: false,
   }),
   methods: {
     createRecord() {
-      if(!this.photo){
+      if (!this.photo) {
         this.imageText = "Image Is Required";
         this.imageTextColor = "text-danger";
-      }else{
+      } else {
         this.loading = true,
-          this.$axios.post("https://almurafiq.dev-krito.com/api/" + this.model + '/store', {
-            bank_name_ar: this.name_ar,
-            bank_name_en: this.name_ar,
-            branch_name_ar: this.name_ar,
-            branch_name_en: this.name_ar,
-            owner_name_ar: this.name_ar,
-            owner_name_en: this.name_ar,
-            account_num: this.name_ar,
-            swift_num: this.name_ar,
+          this.$axios.post(this.model + '/store', {
+            name_ar: this.name_ar,
+            name_en: this.name_en,
+            meta_title: this.meta_title,
+            meta_description: this.meta_desc,
+            active: this.published,
+            in_home: this.featured,
+            in_nav: this.in_nav,
+            parent_id: 0,
+            type: 0,
             image: this.photo
           })
             .then(response => {
-              if (response.data.status == '500') {
-                this.error_message = 'email is Repeated'
-              } else {
+              if (response.data.status === 200) {
                 this.loading = false
-                this.$router.push('/ecommerce/brands')
+                Swal.fire({
+                  position: 'top-end',
+                  icon: 'success',
+                  title: 'Your work has been saved',
+                  showConfirmButton: false,
+                  timer: 1500
+                })
+                this.$router.push('/ecommerce/' + this.model)
+              } else {
+                this.error_message = response.data.message
+                Swal.fire({
+                  position: 'top-end',
+                  icon: 'error',
+                  title: 'Oops...',
+                  text: response.data.message,
+                  showConfirmButton: true,
+                  timer: 5000
+                })
               }
 
             }).catch((error) => {
@@ -238,7 +271,6 @@ export default {
           })
       }
     },
-
     changeStatus(el) {
       if (el === 'published') {
         if (this.published) {
@@ -252,9 +284,14 @@ export default {
         } else {
           this.featuredText = "text-muted";
         }
+      } else if (el === 'in_nav') {
+        if (this.featured) {
+          this.in_navText = "text-success";
+        } else {
+          this.in_navText = "text-muted";
+        }
       }
     },
-
     onFileChange(e) {
       console.log('file changes');
       var files = e.target.files || e.dataTransfer.files;
@@ -275,7 +312,6 @@ export default {
       };
       reader.readAsDataURL(file)
     },
-
     setMetaData(from) {
       if (from === 1) {
         this.meta_desc = this.name_en;
@@ -285,22 +321,18 @@ export default {
         this.meta_title = this.name_en;
       }
     },
-
     validate() {
       if (this.$refs.form.validate()) {
         this.loading = true;
         this.createRecord()
       }
     },
-
     reset() {
       this.$refs.form.reset()
     },
-
     resetValidation() {
       this.$refs.form.resetValidation()
     },
-
   }
 }
 </script>
