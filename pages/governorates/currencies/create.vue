@@ -95,13 +95,7 @@
                   >{{ name_en }}
                   </v-textarea>
                 </v-col>
-                <v-col sm="6">
-                  <b-form-select v-model="cat_id" size="sm" :options="categories" @change="getSubCategories" :label="$t('forms.general.Categories')" ></b-form-select>&nbsp;
-                </v-col>
-                <v-col sm="6">
-                  <b-form-select v-model="parent_id" size="sm" :options="subCategories" :label="$t('forms.general.SubCategories')" ></b-form-select>&nbsp;
-                </v-col>
-                <v-col sm="6" ></v-col>
+                <v-col sm="6"></v-col>
                 <v-col
                   cols="6"
                   sm="2"
@@ -179,23 +173,18 @@ export default {
   data: () => ({
     valid: true,
     loading: true,
-    model: "subSubCategories",
-    title: 'Create Sub Sub Categories',
+    model: "categories",
+    title: 'Create Categories',
     publishedText: "text-success",
     featuredText: "text-muted",
     in_navText: "text-muted",
-    categories: [],
-    subCategories: [],
-    parent_id: 0,
-    cat_id: 0,
-    lang:'ar',
     items: [{
       text: 'Dashboard',
       href: '/',
     },
       {
-        text: 'subSubCategories',
-        href: '/ecommerce/subSubCategories',
+        text: 'Categories',
+        href: '/ecommerce/categories',
       },
       {
         text: 'create',
@@ -235,60 +224,7 @@ export default {
     featured: false,
     in_nav: false,
   }),
-
-  mounted() {
-    this.getCategories()
-  },
-
   methods: {
-    getCategories(){
-      this.$axios.get('categories?to=-1', {
-        headers:{
-          'lang': 'ar'
-        }
-      }).then((response) => {
-        this.allCategories = response.data.data;
-        console.log(response.data.data, this.allCategories.length, this.allCategories);
-        for (var i=0; i < this.allCategories.length; i++){
-          this.categories.push({
-            'value': this.allCategories[i].id,
-            'text': this.lang=='ar'?this.allCategories[i].name_ar:this.allCategories[i].name_en
-          })
-        }
-
-      }).catch((error) => {
-        Swal.fire({
-          icon: 'error',
-          title: 'Oops...',
-          text: error,
-        })
-      });
-    },
-
-    getSubCategories(){
-      this.$axios.get('subCategories?category_id='+this.cat_id+'&to=-1', {
-        headers:{
-          'lang': 'ar'
-        }
-      }).then((response) => {
-        this.subCategories = [];
-        this.allSubCategories = response.data.data;
-        console.log(response.data.data, this.allSubCategories.length, this.allSubCategories);
-        for (var i=0; i < this.allSubCategories.length; i++){
-          this.subCategories.push({
-            'value': this.allSubCategories[i].id,
-            'text': this.lang=='ar'?this.allSubCategories[i].name_ar:this.allSubCategories[i].name_en
-          })
-        }
-      }).catch((error) => {
-        Swal.fire({
-          icon: 'error',
-          title: 'Oops...',
-          text: error,
-        })
-      });
-    },
-
     createRecord() {
       if (!this.photo) {
         this.imageText = "Image Is Required";
@@ -303,9 +239,8 @@ export default {
             active: this.published,
             in_home: this.featured,
             in_nav: this.in_nav,
-            parent_id:this.parent_id,
-            cat_id:this.cat_id,
-            type: 2,
+            parent_id: 0,
+            type: 0,
             image: this.photo
           })
             .then(response => {

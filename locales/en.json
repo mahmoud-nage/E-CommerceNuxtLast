@@ -6,6 +6,9 @@
       "published": "Published",
       "featured": "Featured",
       "in_nav": "In Nav",
+      "default": "Default",
+      "lat": "latitude",
+      "lon": "longitude",
       "meta_desc": "Meta Description",
       "meta_title": "Meta Title",
       "name_ar": "Name Arabic",
@@ -27,6 +30,11 @@
       "is_affilate": "Affilator",
       "is_package": "Package",
       "is_blocked": "Blocked",
+      "cash": "Cash",
+      "card": "Visa & Master Card",
+      "valu": "Investment",
+      "kiosk": "Masary & Aman",
+      "exchange_rate_usd": "Exchange Rate To USD",
       "action": "Action",
       "display": "Display",
       "countProducts": "Count Products"
@@ -43,7 +51,9 @@
       "reply": "Reply"
     },
     "sections": {
-      "meta_section": "Meta Section"
+      "meta_section": "Meta Section",
+      "payment_method": "Payment Method Section",
+      "actions": "Actions Section"
     },
     "msg": {
       "meta_section": "if you not fill this section, will fill all automatically from your data -_-"

@@ -7,7 +7,8 @@
           <div class="card-body">
             <div class="row mb-2">
               <div class="col-sm-6">
-                <b-button class="btn-rounded ml-1 text-white" variant="success" :to="`/ecommerce/${model}/create`" dark><span
+                <b-button class="btn-rounded ml-1 text-white" variant="success" :to="`/governorates/${model}/create`"
+                          dark><span
                   class="btn-label"><i class="mdi mdi-plus"></i></span>{{ $t('Create') }}
                 </b-button>
               </div>
@@ -28,7 +29,7 @@
                 <div id="tickets-table_length" class="dataTables_length">
                   <label class="d-inline-flex align-items-center">
                     Display&nbsp;
-                    <b-form-select v-model="perPage" size="sm" :options="pageOptions"></b-form-select>&nbsp;{{ model }}
+                    <b-form-select v-model="perPage" size="sm" :options="pageOptions"></b-form-select>&nbsp;customers
                   </label>
                 </div>
               </div>
@@ -59,51 +60,26 @@
                   </div>
                 </template>
 
-                <template v-slot:cell(subSubCategory)="data">
-                  <img v-if="data.item.image" :src="data.item.image" alt="" class="rounded mr-3" height="48"
-                       width="48"/>
-                  <div v-if="!data.item.image" class="avatar-xs d-inline-block mr-2">
+                <template v-slot:cell(Country)="data">
+                  <img v-if="data.item.icon" :src="data.item.icon" alt="" class="rounded mr-3" height="48" width="48"/>
+                  <div v-if="!data.item.icon" class="avatar-xs d-inline-block mr-2">
                     <div class="avatar-title bg-soft-primary rounded-circle text-primary">
                       <i class="mdi mdi-account-circle m-0"></i>
                     </div>
                   </div>
                   <h5 class="m-0 d-inline-block align-middle">
-                    <a href="#" class="text-dark" v-if="">{{ lang === 'ar' ? data.item.name_ar : data.item.name_en }}
-                      {{ data.item.index }}</a>
+                    <a href="#" class="text-dark" v-if="">{{
+                        lang === 'ar' ? data.item.name_ar : data.item.name_en
+                      }}</a>
                   </h5>
                 </template>
-                <template v-slot:cell(sub_category)="data">
-                  <div v-if="data.item.sub_category">
-                    <img v-if="data.item.sub_category.image" :src="data.item.sub_category.image" alt=""
-                         class="rounded mr-3" height="48" width="48"/>
-                    <div v-if="!data.item.sub_category.image" class="avatar-xs d-inline-block mr-2">
-                      <div class="avatar-title bg-soft-primary rounded-circle text-primary">
-                        <i class="mdi mdi-account-circle m-0"></i>
-                      </div>
-                    </div>
-                    <h5 class="m-0 d-inline-block align-middle">
-                      <a href="#" class="text-dark">{{
-                          lang === 'ar' ? data.item.sub_category.name_ar : data.item.sub_category.name_en
-                        }}</a>
-                    </h5>
-                  </div>
-                </template>
 
-                <template v-slot:cell(get_category_with_sub_sub)="data">
-                  <div v-if="data.item.get_category_with_sub_sub">
-                    <img v-if="data.item.get_category_with_sub_sub.image" :src="data.item.get_category_with_sub_sub.image" alt="" class="rounded mr-3"
-                         height="48" width="48"/>
-                    <div v-if="!data.item.get_category_with_sub_sub.image" class="avatar-xs d-inline-block mr-2">
-                      <div class="avatar-title bg-soft-primary rounded-circle text-primary">
-                        <i class="mdi mdi-account-circle m-0"></i>
-                      </div>
-                    </div>
-                    <h5 class="m-0 d-inline-block align-middle">
-                      <a href="#" class="text-dark">{{
-                          lang === 'ar' ? data.item.get_category_with_sub_sub.name_ar : data.item.get_category_with_sub_sub.name_en
-                        }}</a>
-                    </h5>
-                  </div>
+                <template v-slot:cell(Currency)="data">
+                  <h5 class="m-0 d-inline-block align-middle">
+                    <a href="#" class="text-dark" v-if="">{{
+                        lang === 'ar' ? data.item.name_ar : data.item.name_en
+                      }}</a>
+                  </h5>
                 </template>
 
                 <template v-slot:cell(Published)="data">
@@ -111,15 +87,19 @@
                       data.item.active ? 'Published' : 'UnPublished'
                     }}</span>
                 </template>
-                <template v-slot:cell(Featured)="data">
-                  <span class="badge badge-soft-success" :class="{'badge-soft-danger': data.item.in_home === 0}">{{
-                      data.item.in_home ? 'Featured' : 'UnFeatured'
+                <template v-slot:cell(default)="data">
+                  <span class="badge badge-soft-success" :class="{'badge-soft-danger': data.item.default === 0}">{{
+                      data.item.default ? 'Default' : 'UnDefault'
                     }}</span>
                 </template>
-                <template v-slot:cell(in_nav)="data">
-                  <span class="badge badge-soft-success" :class="{'badge-soft-danger': data.item.in_nav === 0}">{{
-                      data.item.in_nav ? 'In Nav' : 'Not In Nav'
-                    }}</span>
+
+                <template v-slot:cell(cities_count)="data">
+                                <span v-if="data.item.cities_count >= 0" class="badge" :class="{
+                      'badge-success': data.item.cities_count <= 100,
+                      'badge-danger': data.item.cities_count <= 0 ,
+                      'badge-warning':
+                        data.item.cities_count >= 150
+                    }">{{ data.item.cities_count }} {{ $t('Cities') }}</span>
                 </template>
 
                 <template v-slot:cell(products_count)="data">
@@ -128,14 +108,14 @@
                       'badge-danger': data.item.products_count <= 0 ,
                       'badge-warning':
                         data.item.products_count >= 150
-                    }">{{ data.item.products_count }} {{ $t('Product') }}</span>
+                    }">{{ data.item.products_count }} {{ $t('product') }}</span>
                 </template>
 
                 <template v-slot:cell(action)="data, index">
                   <ul class="list-inline table-action m-0">
                     <li class="list-inline-item">
                       <NuxtLink
-                        :to="`/ecommerce/${model}/${data.item.id}/edit`"
+                        :to="`/governorates/${model}/${data.item.id}/edit`"
                         class="action-icon text-primary"><i class="mdi mdi-square-edit-outline"></i></NuxtLink>
                     </li>
                     <li class="list-inline-item">
@@ -145,7 +125,6 @@
                     </li>
                   </ul>
                 </template>
-
               </b-table>
             </div>
             <div class="row" v-if="this.totalRows > this.perPage">
@@ -190,8 +169,8 @@
   </div>
 </template>
 
-
 <script>
+
 import Swal from "sweetalert2";
 
 /**
@@ -205,18 +184,18 @@ export default {
   },
   data() {
     return {
-      model: "subSubCategories",
+      model: "countries",
+      title: "Countries List",
       Data: {},
       lang: 'ar',
-      title: "subSubCategories List",
       items: [{
         text: "Dashboard"
       },
         {
-          text: "subSubCategories"
+          text: "Countries"
         },
         {
-          text: "subSubCategories List",
+          text: "Countries List",
           active: true
         }
       ],
@@ -229,6 +208,7 @@ export default {
       sortBy: "",
       sortDesc: false,
 
+
       pagination: {},
       dialog: false,
       count2: [],
@@ -236,23 +216,19 @@ export default {
       next: false,
       prev: false,
       last_page: '',
+
       fields: [
         {
           key: "check",
           label: ""
         },
         {
-          key: "subSubCategory",
+          key: "Country",
           sortable: true
         },
         {
-          key: "sub_category",
-          label: "subCategory",
-          sortable: true
-        },
-        {
-          key: "get_category_with_sub_sub",
-          label: "Category",
+          key: "Currency",
+          label: "currency",
           sortable: true
         },
         {
@@ -260,12 +236,13 @@ export default {
           sortable: true
         },
         {
-          key: "Featured",
+          key: "default",
+          label: "Default",
           sortable: true
         },
         {
-          key: "in_nav",
-          label: "In Nav",
+          key: "cities_count",
+          label: "countCities",
           sortable: true
         },
         {
@@ -391,3 +368,4 @@ export default {
   // middleware: 'admin-auth',
 };
 </script>
+

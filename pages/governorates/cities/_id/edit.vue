@@ -96,12 +96,14 @@
                   </v-textarea>
                 </v-col>
                 <v-col sm="6">
-                  <b-form-select v-model="cat_id" size="sm" :options="categories" @change="getSubCategories" :label="$t('forms.general.Categories')" ></b-form-select>&nbsp;
+                  <b-form-select
+                    v-model="parent_id"
+                    size="sm"
+                    :options="categories"
+                    :label="$t('forms.general.Categories')"
+                    disabled-field="selected"
+                  ></b-form-select>&nbsp;
                 </v-col>
-                <v-col sm="6">
-                  <b-form-select v-model="parent_id" size="sm" :options="subCategories" :label="$t('forms.general.SubCategories')" ></b-form-select>&nbsp;
-                </v-col>
-                <v-col sm="6" ></v-col>
                 <v-col
                   cols="6"
                   sm="2"
@@ -167,7 +169,6 @@
   </div>
 </template>
 
-
 <script>
 import vue2Dropzone from 'vue2-dropzone'
 import Swal from "sweetalert2";
@@ -179,26 +180,25 @@ export default {
   data: () => ({
     valid: true,
     loading: true,
-    model: "subSubCategories",
-    title: 'Create Sub Sub Categories',
+    lang: 'ar',
+    model: "subCategories",
+    title: "Create Sub Categories",
     publishedText: "text-success",
     featuredText: "text-muted",
     in_navText: "text-muted",
     categories: [],
-    subCategories: [],
     parent_id: 0,
-    cat_id: 0,
-    lang:'ar',
+
     items: [{
       text: 'Dashboard',
       href: '/',
     },
       {
-        text: 'subSubCategories',
-        href: '/ecommerce/subSubCategories',
+        text: 'Categories',
+        href: '/ecommerce/subCategories',
       },
       {
-        text: 'create',
+        text: 'Edit',
         active: true,
       },
     ],
@@ -225,7 +225,7 @@ export default {
     ],
 
     keywordRules: [
-      v => !!v || 'Title Arabic is required',
+      v => !!v || 'Description Arabic is required',
       v => (v && v.length <= 190) || 'Name Arabic must be less than 190 characters',
     ],
     descRules: [
@@ -234,26 +234,72 @@ export default {
     published: true,
     featured: false,
     in_nav: false,
+    id: "",
   }),
 
   mounted() {
+    this.id = this.$route.params.id
+    this.getRecord()
     this.getCategories()
   },
 
   methods: {
-    getCategories(){
+    getRecord() {
+      this.$axios.get(this.model + '/' + this.id)
+        .then(response => {
+          if (response.data.status === 200) {
+            console.log('sub');
+            this.record = response.data.data
+            this.name_ar = this.record.name_ar
+            this.name_en = this.record.name_en
+            this.meta_title = this.record.meta_title
+            this.meta_desc = this.record.meta_description
+            this.published = this.record.active ? true : false
+            this.featured = this.record.in_home ? true : false
+            this.in_nav = this.record.in_nav ? true : false
+            this.parent_id = this.record.parent_id
+          } else {
+            this.error_message = response.data.message
+            Swal.fire({
+              position: 'top-end',
+              icon: 'error',
+              title: 'Oops...',
+              text: response.data.message,
+              showConfirmButton: true,
+              timer: 5000
+            })
+          }
+        }).catch((error, code) => {
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: error,
+        })
+      })
+    },
+    getCategories() {
       this.$axios.get('categories?to=-1', {
-        headers:{
+        headers: {
           'lang': 'ar'
         }
       }).then((response) => {
         this.allCategories = response.data.data;
-        console.log(response.data.data, this.allCategories.length, this.allCategories);
-        for (var i=0; i < this.allCategories.length; i++){
-          this.categories.push({
-            'value': this.allCategories[i].id,
-            'text': this.lang=='ar'?this.allCategories[i].name_ar:this.allCategories[i].name_en
-          })
+        // console.log(response.data.data, this.allCategories.length, this.allCategories);
+        console.log('cat', this.parent_id);
+        for (var i = 0; i < this.allCategories.length; i++) {
+          if (this.parent_id === this.allCategories[i].id) {
+            console.log('haa');
+            this.categories.push({
+              'value': this.allCategories[i].id,
+              'text': this.lang == 'ar' ? this.allCategories[i].name_ar : this.allCategories[i].name_en,
+              'selected': true,
+            })
+          } else {
+            this.categories.push({
+              'value': this.allCategories[i].id,
+              'text': this.lang == 'ar' ? this.allCategories[i].name_ar : this.allCategories[i].name_en
+            })
+          }
         }
 
       }).catch((error) => {
@@ -264,77 +310,50 @@ export default {
         })
       });
     },
+    updateRecord() {
+      this.loading = true
+      this.$axios.put(this.model + '/' + this.id + '/update', {
+        name_ar: this.name_ar,
+        name_en: this.name_en,
+        meta_title: this.meta_title,
+        meta_description: this.meta_desc,
+        active: this.published,
+        in_home: this.featured,
+        in_nav: this.in_nav,
+        parent_id: this.parent_id,
+        type: 1,
+        image: this.photo
+      })
+        .then(response => {
+          if (response.data.status === 200) {
+            this.loading = false
+            Swal.fire({
+              position: 'top-end',
+              icon: 'success',
+              title: 'Your work has been saved',
+              showConfirmButton: false,
+              timer: 1500
+            })
+            this.$router.push('/ecommerce/' + this.model)
+          } else {
+            this.error_message = response.data.message
+            Swal.fire({
+              position: 'top-end',
+              icon: 'error',
+              title: 'Oops...',
+              text: response.data.message,
+              showConfirmButton: true,
+              timer: 5000
+            })
+          }
 
-    getSubCategories(){
-      this.$axios.get('subCategories?category_id='+this.cat_id+'&to=-1', {
-        headers:{
-          'lang': 'ar'
-        }
-      }).then((response) => {
-        this.subCategories = [];
-        this.allSubCategories = response.data.data;
-        console.log(response.data.data, this.allSubCategories.length, this.allSubCategories);
-        for (var i=0; i < this.allSubCategories.length; i++){
-          this.subCategories.push({
-            'value': this.allSubCategories[i].id,
-            'text': this.lang=='ar'?this.allSubCategories[i].name_ar:this.allSubCategories[i].name_en
-          })
-        }
-      }).catch((error) => {
+        }).catch((error, code) => {
         Swal.fire({
           icon: 'error',
           title: 'Oops...',
           text: error,
         })
-      });
-    },
-
-    createRecord() {
-      if (!this.photo) {
-        this.imageText = "Image Is Required";
-        this.imageTextColor = "text-danger";
-      } else {
-        this.loading = true,
-          this.$axios.post(this.model + '/store', {
-            name_ar: this.name_ar,
-            name_en: this.name_en,
-            meta_title: this.meta_title,
-            meta_description: this.meta_desc,
-            active: this.published,
-            in_home: this.featured,
-            in_nav: this.in_nav,
-            parent_id:this.parent_id,
-            cat_id:this.cat_id,
-            type: 2,
-            image: this.photo
-          })
-            .then(response => {
-              if (response.data.status === 200) {
-                this.loading = false
-                Swal.fire({
-                  position: 'top-end',
-                  icon: 'success',
-                  title: 'Your work has been saved',
-                  showConfirmButton: false,
-                  timer: 1500
-                })
-                this.$router.push('/ecommerce/' + this.model)
-              } else {
-                this.error_message = response.data.message
-                Swal.fire({
-                  position: 'top-end',
-                  icon: 'error',
-                  title: 'Oops...',
-                  text: response.data.message,
-                  showConfirmButton: true,
-                  timer: 5000
-                })
-              }
-
-            }).catch((error) => {
-            console.log(error);
-          })
-      }
+      })
     },
     changeStatus(el) {
       if (el === 'published') {
@@ -350,7 +369,7 @@ export default {
           this.featuredText = "text-muted";
         }
       } else if (el === 'in_nav') {
-        if (this.featured) {
+        if (this.in_nav) {
           this.in_navText = "text-success";
         } else {
           this.in_navText = "text-muted";
@@ -389,7 +408,7 @@ export default {
     validate() {
       if (this.$refs.form.validate()) {
         this.loading = true;
-        this.createRecord()
+        this.updateRecord()
       }
     },
     reset() {
@@ -401,5 +420,3 @@ export default {
   }
 }
 </script>
-
-

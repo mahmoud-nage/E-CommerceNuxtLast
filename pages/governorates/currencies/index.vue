@@ -1,6 +1,7 @@
+
 <template>
   <div>
-    <PageHeader :title="title" :items="items"/>
+    <PageHeader :title="title" :items="items" />
     <div class="row">
       <div class="col-12">
         <div class="card">
@@ -28,7 +29,7 @@
                 <div id="tickets-table_length" class="dataTables_length">
                   <label class="d-inline-flex align-items-center">
                     Display&nbsp;
-                    <b-form-select v-model="perPage" size="sm" :options="pageOptions"></b-form-select>&nbsp;{{ model }}
+                    <b-form-select v-model="perPage" size="sm" :options="pageOptions"></b-form-select>&nbsp;customers
                   </label>
                 </div>
               </div>
@@ -38,8 +39,7 @@
                 <div id="tickets-table_filter" class="dataTables_filter text-md-right">
                   <label class="d-inline-flex align-items-center">
                     Search:
-                    <b-form-input v-model="filter" type="search" placeholder="Search..."
-                                  class="form-control form-control-sm ml-2"></b-form-input>
+                    <b-form-input v-model="filter" type="search" placeholder="Search..." class="form-control form-control-sm ml-2"></b-form-input>
                   </label>
                 </div>
               </div>
@@ -47,88 +47,54 @@
             </div>
             <!-- Table -->
             <div class="table-responsive mb-0">
-              <b-table table-class="table table-centered w-100" thead-tr-class="bg-light" :items="Data" :fields="fields"
-                       responsive="sm" :per-page="perPage" :current-page="currentPage" :sort-by.sync="sortBy"
-                       :sort-desc.sync="sortDesc"
+              <b-table table-class="table table-centered w-100" thead-tr-class="bg-light" :items="Data" :fields="fields" responsive="sm" :per-page="perPage" :current-page="currentPage" :sort-by.sync="sortBy" :sort-desc.sync="sortDesc"
                        :filter="filter" :filter-included-fields="filterOn" @filtered="onFiltered">
                 <template v-slot:cell(check)="data">
                   <div class="custom-control custom-checkbox text-center">
-                    <input type="checkbox" class="custom-control-input" :id="`contacusercheck${data.item.id}`"/>
+                    <input type="checkbox" class="custom-control-input" :id="`contacusercheck${data.item.id}`" />
 
                     <label class="custom-control-label" :for="`contacusercheck${data.item.id}`"></label>
                   </div>
                 </template>
 
-                <template v-slot:cell(subSubCategory)="data">
-                  <img v-if="data.item.image" :src="data.item.image" alt="" class="rounded mr-3" height="48"
-                       width="48"/>
+                <template v-slot:cell(Category)="data">
+                  <img v-if="data.item.image" :src="data.item.image" alt="" class="rounded mr-3" height="48" width="48"/>
                   <div v-if="!data.item.image" class="avatar-xs d-inline-block mr-2">
                     <div class="avatar-title bg-soft-primary rounded-circle text-primary">
                       <i class="mdi mdi-account-circle m-0"></i>
                     </div>
                   </div>
                   <h5 class="m-0 d-inline-block align-middle">
-                    <a href="#" class="text-dark" v-if="">{{ lang === 'ar' ? data.item.name_ar : data.item.name_en }}
-                      {{ data.item.index }}</a>
+                    <a href="#" class="text-dark" v-if="">{{ lang==='ar'?data.item.name_ar:data.item.name_en }} {{data.item.index}}</a>
                   </h5>
-                </template>
-                <template v-slot:cell(sub_category)="data">
-                  <div v-if="data.item.sub_category">
-                    <img v-if="data.item.sub_category.image" :src="data.item.sub_category.image" alt=""
-                         class="rounded mr-3" height="48" width="48"/>
-                    <div v-if="!data.item.sub_category.image" class="avatar-xs d-inline-block mr-2">
-                      <div class="avatar-title bg-soft-primary rounded-circle text-primary">
-                        <i class="mdi mdi-account-circle m-0"></i>
-                      </div>
-                    </div>
-                    <h5 class="m-0 d-inline-block align-middle">
-                      <a href="#" class="text-dark">{{
-                          lang === 'ar' ? data.item.sub_category.name_ar : data.item.sub_category.name_en
-                        }}</a>
-                    </h5>
-                  </div>
-                </template>
-
-                <template v-slot:cell(get_category_with_sub_sub)="data">
-                  <div v-if="data.item.get_category_with_sub_sub">
-                    <img v-if="data.item.get_category_with_sub_sub.image" :src="data.item.get_category_with_sub_sub.image" alt="" class="rounded mr-3"
-                         height="48" width="48"/>
-                    <div v-if="!data.item.get_category_with_sub_sub.image" class="avatar-xs d-inline-block mr-2">
-                      <div class="avatar-title bg-soft-primary rounded-circle text-primary">
-                        <i class="mdi mdi-account-circle m-0"></i>
-                      </div>
-                    </div>
-                    <h5 class="m-0 d-inline-block align-middle">
-                      <a href="#" class="text-dark">{{
-                          lang === 'ar' ? data.item.get_category_with_sub_sub.name_ar : data.item.get_category_with_sub_sub.name_en
-                        }}</a>
-                    </h5>
-                  </div>
                 </template>
 
                 <template v-slot:cell(Published)="data">
-                  <span class="badge badge-soft-success" :class="{'badge-soft-danger': data.item.active === 0}">{{
-                      data.item.active ? 'Published' : 'UnPublished'
-                    }}</span>
+                  <span class="badge badge-soft-success" :class="{'badge-soft-danger': data.item.active === 0}">{{ data.item.active?'Published':'UnPublished' }}</span>
                 </template>
                 <template v-slot:cell(Featured)="data">
-                  <span class="badge badge-soft-success" :class="{'badge-soft-danger': data.item.in_home === 0}">{{
-                      data.item.in_home ? 'Featured' : 'UnFeatured'
-                    }}</span>
+                  <span class="badge badge-soft-success" :class="{'badge-soft-danger': data.item.in_home === 0}">{{ data.item.in_home?'Featured':'UnFeatured'  }}</span>
                 </template>
                 <template v-slot:cell(in_nav)="data">
-                  <span class="badge badge-soft-success" :class="{'badge-soft-danger': data.item.in_nav === 0}">{{
-                      data.item.in_nav ? 'In Nav' : 'Not In Nav'
-                    }}</span>
+                  <span class="badge badge-soft-success" :class="{'badge-soft-danger': data.item.in_nav === 0}">{{ data.item.in_nav?'In Nav':'Not In Nav'  }}</span>
                 </template>
 
-                <template v-slot:cell(products_count)="data">
-                                <span v-if="data.item.products_count >= 0" class="badge" :class="{
+                <template  v-slot:cell(products_count)="data" >
+                                <span v-if="data.item.products_count >= 0"  class="badge" :class="{
                       'badge-success': data.item.products_count <= 100,
                       'badge-danger': data.item.products_count <= 0 ,
                       'badge-warning':
                         data.item.products_count >= 150
-                    }">{{ data.item.products_count }} {{ $t('Product') }}</span>
+                    }">{{ data.item.products_count }} {{$t('product')}}</span>
+                </template>
+
+                <template  v-slot:cell(subcategories_count)="data" >
+                                <span v-if="data.item.subcategories_count >= 0" class="badge" :class="{
+                      'badge-success': data.item.subcategories_count <= 100,
+                      'badge-danger': data.item.subcategories_count <= 0 ,
+                      'badge-warning':
+                        data.item.subcategories_count >= 150
+                    }">{{ data.item.subcategories_count }} {{$t('SubCategory')}}</span>
                 </template>
 
                 <template v-slot:cell(action)="data, index">
@@ -139,13 +105,11 @@
                         class="action-icon text-primary"><i class="mdi mdi-square-edit-outline"></i></NuxtLink>
                     </li>
                     <li class="list-inline-item">
-                      <a href="javascript:void(0);" @click="removeRecord(data.index, data.item.id)"
-                         class="action-icon text-danger">
+                      <a href="javascript:void(0);" @click="removeRecord(data.index, data.item.id)" class="action-icon text-danger">
                         <i class="mdi mdi-delete"></i></a>
                     </li>
                   </ul>
                 </template>
-
               </b-table>
             </div>
             <div class="row" v-if="this.totalRows > this.perPage">
@@ -172,11 +136,11 @@
                     </li>
                     <li>
 
-                      <div style="margin:auto;text-align: left;">
-                        <ul class="pagination">
-                          <li class="page-item active"><a class="page-link">Total {{ rows }}</a></li>
-                        </ul>
-                      </div>
+                    <div style="margin:auto;text-align: left;">
+                      <ul  class="pagination">
+                        <li class="page-item active"><a class="page-link">Total {{rows}}</a></li>
+                      </ul>
+                    </div>
                     </li>
 
                   </ul>
@@ -190,10 +154,9 @@
   </div>
 </template>
 
-
 <script>
-import Swal from "sweetalert2";
 
+import Swal from "sweetalert2";
 /**
  * Products-list component
  */
@@ -205,18 +168,18 @@ export default {
   },
   data() {
     return {
-      model: "subSubCategories",
+      model:"categories",
+      title: "Categories List",
       Data: {},
-      lang: 'ar',
-      title: "subSubCategories List",
+      lang:'ar',
       items: [{
         text: "Dashboard"
       },
         {
-          text: "subSubCategories"
+          text: "Categories"
         },
         {
-          text: "subSubCategories List",
+          text: "Categories List",
           active: true
         }
       ],
@@ -229,6 +192,7 @@ export default {
       sortBy: "",
       sortDesc: false,
 
+
       pagination: {},
       dialog: false,
       count2: [],
@@ -236,23 +200,14 @@ export default {
       next: false,
       prev: false,
       last_page: '',
+
       fields: [
         {
           key: "check",
           label: ""
         },
         {
-          key: "subSubCategory",
-          sortable: true
-        },
-        {
-          key: "sub_category",
-          label: "subCategory",
-          sortable: true
-        },
-        {
-          key: "get_category_with_sub_sub",
-          label: "Category",
+          key: "Category",
           sortable: true
         },
         {
@@ -266,6 +221,11 @@ export default {
         {
           key: "in_nav",
           label: "In Nav",
+          sortable: true
+        },
+        {
+          key: "subcategories_count",
+          label: "countSubCategory",
           sortable: true
         },
         {
@@ -318,7 +278,7 @@ export default {
         buttonsStyling: false,
       }).then((result) => {
         if (result.value) {
-          this.$axios.delete(this.model + "/" + id + '/destroy')
+          this.$axios.delete(this.model+ "/" + id + '/destroy')
             .then(response => {
               this.Data.splice(index, 1)
               Swal.fire({
@@ -340,10 +300,10 @@ export default {
       });
     },
 
-    getData(page) {
+    getData(page){
       console.log(this.perPage);
-      this.$axios.get(this.model + '?page=' + page + '&to=' + this.perPage, {
-        headers: {
+      this.$axios.get(this.model+'?page='+page+'&to='+this.perPage, {
+        headers:{
           'lang': 'ar'
         }
       }).then((response) => {
@@ -391,3 +351,4 @@ export default {
   // middleware: 'admin-auth',
 };
 </script>
+

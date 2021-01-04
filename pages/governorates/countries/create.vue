@@ -51,7 +51,6 @@
                     hint="This field uses counter prop"
                     :label="$t('forms.general.name_en')"
                     clearable
-                    @change="setMetaData(1)"
                   ></v-text-field>
                 </v-col>
                 <v-col
@@ -71,78 +70,115 @@
                   <input type="file" name="image" id="image" class="form-control"
                          @change="onFileChange" accept="images/*" required/>
                 </v-col>
-                <v-col
-                  cols="10"
-                  md="12">
-                  <h4 class="header-title m-t-0">{{ $t('forms.sections.meta_section') }}</h4>
-                  <p class="text-muted font-13 m-b-30">{{ $t('forms.msg.meta_section') }}</p>
+                <v-col md="4">
                   <v-text-field
-                    v-model="meta_title"
-                    :rules="keywordRules"
+                    v-model="lat"
                     counter="191"
                     hint="This field uses counter prop"
-                    :label="$t('forms.general.meta_title')"
+                    :label="$t('forms.general.lat')"
                     clearable
                     outlined
                   ></v-text-field>
-                  <v-textarea
-                    v-model="meta_desc"
-                    :rules="descRules"
-                    :label="$t('forms.general.meta_desc')"
-                    rows="5"
+                </v-col>
+                <v-col md="4">
+                  <v-text-field
+                    v-model="lon"
+                    :label="$t('forms.general.lon')"
+                    clearable
+                    counter="191"
+                    hint="This field uses counter prop"
+                    outlined
+                  >
+                  </v-text-field>
+                </v-col>
+                <v-col md="4">
+                  <v-text-field
+                    v-model="exchange_rate_usd"
+                    :label="$t('forms.general.exchange_rate_usd')"
                     clearable
                     outlined
-                  >{{ name_en }}
-                  </v-textarea>
-                </v-col>
-                <v-col sm="6">
-                  <b-form-select v-model="cat_id" size="sm" :options="categories" @change="getSubCategories" :label="$t('forms.general.Categories')" ></b-form-select>&nbsp;
-                </v-col>
-                <v-col sm="6">
-                  <b-form-select v-model="parent_id" size="sm" :options="subCategories" :label="$t('forms.general.SubCategories')" ></b-form-select>&nbsp;
-                </v-col>
-                <v-col sm="6" ></v-col>
-                <v-col
-                  cols="6"
-                  sm="2"
-                >
-                  <b-form-checkbox v-model="published"
-                                   switch
-                                   size="sm"
-                                   inline
-                                   class="float-right"
-                                   @change="changeStatus('published')"
+                    type="number"
+                    prefix="%"
                   >
-                    <div><strong :class="publishedText">{{ $t('forms.general.published') }}</strong></div>
-                  </b-form-checkbox>
+                  </v-text-field>
+                </v-col>
+                <v-row>
+                  <v-col
+                    sm="6"
+                  >
+                    <h4 class="header-title m-t-0">{{ $t('forms.sections.payment_method') }}</h4>
+                    <v-col
+                      sm="6"
+                    >
+                      <b-form-checkbox v-model="cash"
+                                       switch
+                                       size="sm"
+                                       inline
+                                       @change="changeStatus('cash')"
+                      >
+                        <div><strong :class="cash === true?`text-success`:`text-success`">{{
+                            $t('forms.general.cash')
+                          }}</strong>
+                        </div>
+                      </b-form-checkbox>
+                      <b-form-checkbox v-model="card"
+                                       switch
+                                       size="sm"
+                                       inline
+                                       @change="changeStatus('card')"
+                      >
+                        <div><strong :class="card?'text-success':'text-success'">{{ $t('forms.general.card') }}</strong>
+                        </div>
+                      </b-form-checkbox>
+                      <b-form-checkbox v-model="kiosk"
+                                       switch
+                                       size="sm"
+                                       inline
+                                       @change="changeStatus('kiosk')"
+                      >
+                        <div><strong :class="kiosk?'text-success':'text-success'">{{
+                            $t('forms.general.kiosk')
+                          }}</strong></div>
+                      </b-form-checkbox>
+                      <b-form-checkbox v-model="valu"
+                                       switch
+                                       size="sm"
+                                       inline
+                                       @change="changeStatus('value')"
+                      >
+                        <div><strong :class="valu?'text-success':'text-success'">{{ $t('forms.general.valu') }}</strong>
+                        </div>
+                      </b-form-checkbox>
 
-                </v-col>
-                <v-col
-                  cols="6"
-                  sm="2"
-                >
-                  <b-form-checkbox v-model="featured"
-                                   switch
-                                   size="sm"
-                                   inline
-                                   @change="changeStatus('featured')"
+                    </v-col>
+
+                  </v-col>
+                  <v-col
+                    sm="6"
                   >
-                    <div><strong :class="featuredText">{{ $t('forms.general.featured') }}</strong></div>
-                  </b-form-checkbox>
-                </v-col>
-                <v-col
-                  cols="6"
-                  sm="2"
-                >
-                  <b-form-checkbox v-model="in_nav"
-                                   switch
-                                   size="sm"
-                                   inline
-                                   @change="changeStatus('in_nav')"
-                  >
-                    <div><strong :class="in_navText">{{ $t('forms.general.in_nav') }}</strong></div>
-                  </b-form-checkbox>
-                </v-col>
+                    <h4 class="header-title m-t-0">{{ $t('forms.sections.actions') }}</h4>
+                    <v-col
+                      sm="6"
+                    >
+                      <b-form-checkbox v-model="published"
+                                       switch
+                                       size="sm"
+                                       inline
+                                       @change="changeStatus('published')"
+                      >
+                        <div><strong :class="publishedText">{{ $t('forms.general.published') }}</strong></div>
+                      </b-form-checkbox>
+                      <b-form-checkbox v-model="defaultt"
+                                       switch
+                                       size="sm"
+                                       inline
+                                       @change="changeStatus('default')"
+                      >
+                        <div><strong :class="defaultText">{{ $t('forms.general.default') }}</strong></div>
+                      </b-form-checkbox>
+                    </v-col>
+                  </v-col>
+                </v-row>
                 <v-col
                   cols="12"
                   md="12">
@@ -179,23 +215,24 @@ export default {
   data: () => ({
     valid: true,
     loading: true,
-    model: "subSubCategories",
-    title: 'Create Sub Sub Categories',
+    model: "countries",
+    title: 'Create Countries',
     publishedText: "text-success",
-    featuredText: "text-muted",
-    in_navText: "text-muted",
-    categories: [],
-    subCategories: [],
-    parent_id: 0,
-    cat_id: 0,
-    lang:'ar',
+    defaultText: "text-muted",
+    published: true,
+    defaultt: false,
+    cash: true,
+    card: false,
+    kiosk: false,
+    valu: false,
+    exchange_rate_usd: 1.00,
     items: [{
       text: 'Dashboard',
       href: '/',
     },
       {
-        text: 'subSubCategories',
-        href: '/ecommerce/subSubCategories',
+        text: 'Countries',
+        href: '/governorates/countries',
       },
       {
         text: 'create',
@@ -213,8 +250,8 @@ export default {
     imageTextColor: "text-muted",
     name_ar: '',
     name_en: '',
-    meta_title: '',
-    meta_desc: '',
+    lat: '',
+    lon: '',
     nameArRules: [
       v => !!v || 'Name Arabic is required',
       v => (v && v.length <= 190) || 'Name Arabic must be less than 190 characters',
@@ -224,71 +261,8 @@ export default {
       v => (v && v.length <= 190) || 'Name English must be less than 190 characters',
     ],
 
-    keywordRules: [
-      v => !!v || 'Title Arabic is required',
-      v => (v && v.length <= 190) || 'Name Arabic must be less than 190 characters',
-    ],
-    descRules: [
-      v => !!v || 'Description English is required',
-    ],
-    published: true,
-    featured: false,
-    in_nav: false,
   }),
-
-  mounted() {
-    this.getCategories()
-  },
-
   methods: {
-    getCategories(){
-      this.$axios.get('categories?to=-1', {
-        headers:{
-          'lang': 'ar'
-        }
-      }).then((response) => {
-        this.allCategories = response.data.data;
-        console.log(response.data.data, this.allCategories.length, this.allCategories);
-        for (var i=0; i < this.allCategories.length; i++){
-          this.categories.push({
-            'value': this.allCategories[i].id,
-            'text': this.lang=='ar'?this.allCategories[i].name_ar:this.allCategories[i].name_en
-          })
-        }
-
-      }).catch((error) => {
-        Swal.fire({
-          icon: 'error',
-          title: 'Oops...',
-          text: error,
-        })
-      });
-    },
-
-    getSubCategories(){
-      this.$axios.get('subCategories?category_id='+this.cat_id+'&to=-1', {
-        headers:{
-          'lang': 'ar'
-        }
-      }).then((response) => {
-        this.subCategories = [];
-        this.allSubCategories = response.data.data;
-        console.log(response.data.data, this.allSubCategories.length, this.allSubCategories);
-        for (var i=0; i < this.allSubCategories.length; i++){
-          this.subCategories.push({
-            'value': this.allSubCategories[i].id,
-            'text': this.lang=='ar'?this.allSubCategories[i].name_ar:this.allSubCategories[i].name_en
-          })
-        }
-      }).catch((error) => {
-        Swal.fire({
-          icon: 'error',
-          title: 'Oops...',
-          text: error,
-        })
-      });
-    },
-
     createRecord() {
       if (!this.photo) {
         this.imageText = "Image Is Required";
@@ -298,15 +272,18 @@ export default {
           this.$axios.post(this.model + '/store', {
             name_ar: this.name_ar,
             name_en: this.name_en,
-            meta_title: this.meta_title,
-            meta_description: this.meta_desc,
+            lat: this.lat,
+            lon: this.lon,
+            currency_id: this.currency_id,
+            locales: this.locales,
             active: this.published,
-            in_home: this.featured,
-            in_nav: this.in_nav,
-            parent_id:this.parent_id,
-            cat_id:this.cat_id,
-            type: 2,
-            image: this.photo
+            default: this.defaultt,
+            icon: this.photo,
+            cash: this.cash,
+            accept_card: this.card,
+            accept_kiosk: this.kiosk,
+            accept_valu: this.valu,
+            exchange_rate_usd: this.exchange_rate_usd,
           })
             .then(response => {
               if (response.data.status === 200) {
@@ -318,14 +295,14 @@ export default {
                   showConfirmButton: false,
                   timer: 1500
                 })
-                this.$router.push('/ecommerce/' + this.model)
+                this.$router.push('/governorates/' + this.model)
               } else {
                 this.error_message = response.data.message
                 Swal.fire({
                   position: 'top-end',
                   icon: 'error',
                   title: 'Oops...',
-                  text: response.data.message,
+                  text: response.data.message[0],
                   showConfirmButton: true,
                   timer: 5000
                 })
@@ -343,17 +320,11 @@ export default {
         } else {
           this.publishedText = "text-muted";
         }
-      } else if (el === 'featured') {
-        if (this.featured) {
-          this.featuredText = "text-success";
+      } else if (el === 'default') {
+        if (this.default) {
+          this.defaultText = "text-success";
         } else {
-          this.featuredText = "text-muted";
-        }
-      } else if (el === 'in_nav') {
-        if (this.featured) {
-          this.in_navText = "text-success";
-        } else {
-          this.in_navText = "text-muted";
+          this.defaultText = "text-muted";
         }
       }
     },
@@ -376,15 +347,6 @@ export default {
         console.log(vm.photo);
       };
       reader.readAsDataURL(file)
-    },
-    setMetaData(from) {
-      if (from === 1) {
-        this.meta_desc = this.name_en;
-        this.meta_title = this.name_en;
-      } else if (from === 2) {
-        this.meta_desc = this.desc_en;
-        this.meta_title = this.name_en;
-      }
     },
     validate() {
       if (this.$refs.form.validate()) {
