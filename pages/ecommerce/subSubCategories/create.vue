@@ -248,7 +248,7 @@ export default {
         }
       }).then((response) => {
         this.allCategories = response.data.data;
-        console.log(response.data.data, this.allCategories.length, this.allCategories);
+        this.cat_id = this.allCategories[0].id;
         for (var i=0; i < this.allCategories.length; i++){
           this.categories.push({
             'value': this.allCategories[i].id,
@@ -273,7 +273,7 @@ export default {
       }).then((response) => {
         this.subCategories = [];
         this.allSubCategories = response.data.data;
-        console.log(response.data.data, this.allSubCategories.length, this.allSubCategories);
+        this.parent_id = this.allSubCategories[0].id;
         for (var i=0; i < this.allSubCategories.length; i++){
           this.subCategories.push({
             'value': this.allSubCategories[i].id,

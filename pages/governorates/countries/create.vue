@@ -114,9 +114,8 @@
                                        switch
                                        size="sm"
                                        inline
-                                       @change="changeStatus('cash')"
                       >
-                        <div><strong :class="cash === true?`text-success`:`text-success`">{{
+                        <div><strong :class="cash?on:off">{{
                             $t('forms.general.cash')
                           }}</strong>
                         </div>
@@ -125,18 +124,16 @@
                                        switch
                                        size="sm"
                                        inline
-                                       @change="changeStatus('card')"
                       >
-                        <div><strong :class="card?'text-success':'text-success'">{{ $t('forms.general.card') }}</strong>
+                        <div><strong :class="card?on:off">{{ $t('forms.general.card') }}</strong>
                         </div>
                       </b-form-checkbox>
                       <b-form-checkbox v-model="kiosk"
                                        switch
                                        size="sm"
                                        inline
-                                       @change="changeStatus('kiosk')"
                       >
-                        <div><strong :class="kiosk?'text-success':'text-success'">{{
+                        <div><strong :class="kiosk?on:off">{{
                             $t('forms.general.kiosk')
                           }}</strong></div>
                       </b-form-checkbox>
@@ -144,9 +141,8 @@
                                        switch
                                        size="sm"
                                        inline
-                                       @change="changeStatus('value')"
                       >
-                        <div><strong :class="valu?'text-success':'text-success'">{{ $t('forms.general.valu') }}</strong>
+                        <div><strong :class="valu?on:off">{{ $t('forms.general.valu') }}</strong>
                         </div>
                       </b-form-checkbox>
 
@@ -164,17 +160,15 @@
                                        switch
                                        size="sm"
                                        inline
-                                       @change="changeStatus('published')"
                       >
-                        <div><strong :class="publishedText">{{ $t('forms.general.published') }}</strong></div>
+                        <div><strong :class="published?on:off">{{ $t('forms.general.published') }}</strong></div>
                       </b-form-checkbox>
                       <b-form-checkbox v-model="defaultt"
                                        switch
                                        size="sm"
                                        inline
-                                       @change="changeStatus('default')"
                       >
-                        <div><strong :class="defaultText">{{ $t('forms.general.default') }}</strong></div>
+                        <div><strong :class="defaultt?on:off">{{ $t('forms.general.default') }}</strong></div>
                       </b-form-checkbox>
                     </v-col>
                   </v-col>
@@ -217,8 +211,8 @@ export default {
     loading: true,
     model: "countries",
     title: 'Create Countries',
-    publishedText: "text-success",
-    defaultText: "text-muted",
+    on: "text-success",
+    off: "text-muted",
     published: true,
     defaultt: false,
     cash: true,
@@ -311,21 +305,6 @@ export default {
             }).catch((error) => {
             console.log(error);
           })
-      }
-    },
-    changeStatus(el) {
-      if (el === 'published') {
-        if (this.published) {
-          this.publishedText = "text-success";
-        } else {
-          this.publishedText = "text-muted";
-        }
-      } else if (el === 'default') {
-        if (this.default) {
-          this.defaultText = "text-success";
-        } else {
-          this.defaultText = "text-muted";
-        }
       }
     },
     onFileChange(e) {

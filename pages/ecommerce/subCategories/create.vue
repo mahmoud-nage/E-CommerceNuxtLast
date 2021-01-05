@@ -242,7 +242,7 @@ export default {
         }
       }).then((response) => {
         this.allCategories = response.data.data;
-        console.log(response.data.data, this.allCategories.length, this.allCategories);
+        this.parent_id = this.allCategories[0].id;
         for (var i=0; i < this.allCategories.length; i++){
           this.categories.push({
             'value': this.allCategories[i].id,

@@ -7,7 +7,7 @@
           <div class="card-body">
             <div class="row mb-2">
               <div class="col-sm-6">
-                <b-button class="btn-rounded ml-1 text-white" variant="success" :to="`/ecommerce/${model}/create`" dark><span
+                <b-button class="btn-rounded ml-1 text-white" variant="success" :to="`/governorates/${model}/create`" dark><span
                   class="btn-label"><i class="mdi mdi-plus"></i></span>{{ $t('Create') }}
                 </b-button>
               </div>
@@ -59,51 +59,35 @@
                   </div>
                 </template>
 
-                <template v-slot:cell(subSubCategory)="data">
-                  <img v-if="data.item.image" :src="data.item.image" alt="" class="rounded mr-3" height="48"
-                       width="48"/>
-                  <div v-if="!data.item.image" class="avatar-xs d-inline-block mr-2">
+
+                <template v-slot:cell(Area)="data">
+                  <h5 class="m-0 d-inline-block align-middle">
+                    <a href="#" class="text-dark" v-if="">{{
+                        lang === 'ar' ? data.item.name_ar : data.item.name_en
+                      }}</a>
+                  </h5>
+                </template>
+
+                <template v-slot:cell(city)="data">
+                  <h5 class="m-0 d-inline-block align-middle">
+                    <a href="#" class="text-dark" v-if="">{{
+                        lang === 'ar' ? data.item.city.name_ar : data.city.item.name_en
+                      }}</a>
+                  </h5>
+                </template>
+
+                <template v-slot:cell(country)="data">
+                  <img v-if="data.item.country.icon" :src="data.item.country.icon" alt="" class="rounded mr-3" height="48" width="48"/>
+                  <div v-if="!data.item.country.icon" class="avatar-xs d-inline-block mr-2">
                     <div class="avatar-title bg-soft-primary rounded-circle text-primary">
                       <i class="mdi mdi-account-circle m-0"></i>
                     </div>
                   </div>
                   <h5 class="m-0 d-inline-block align-middle">
-                    <a href="#" class="text-dark" v-if="">{{ lang === 'ar' ? data.item.name_ar : data.item.name_en }}
-                      {{ data.item.index }}</a>
+                    <a href="#" class="text-dark" v-if="">{{
+                        lang === 'ar' ? data.item.country.name_ar : data.item.country.name_en
+                      }}</a>
                   </h5>
-                </template>
-                <template v-slot:cell(sub_category)="data">
-                  <div v-if="data.item.sub_category">
-                    <img v-if="data.item.sub_category.image" :src="data.item.sub_category.image" alt=""
-                         class="rounded mr-3" height="48" width="48"/>
-                    <div v-if="!data.item.sub_category.image" class="avatar-xs d-inline-block mr-2">
-                      <div class="avatar-title bg-soft-primary rounded-circle text-primary">
-                        <i class="mdi mdi-account-circle m-0"></i>
-                      </div>
-                    </div>
-                    <h5 class="m-0 d-inline-block align-middle">
-                      <a href="#" class="text-dark">{{
-                          lang === 'ar' ? data.item.sub_category.name_ar : data.item.sub_category.name_en
-                        }}</a>
-                    </h5>
-                  </div>
-                </template>
-
-                <template v-slot:cell(get_category_with_sub_sub)="data">
-                  <div v-if="data.item.get_category_with_sub_sub">
-                    <img v-if="data.item.get_category_with_sub_sub.image" :src="data.item.get_category_with_sub_sub.image" alt="" class="rounded mr-3"
-                         height="48" width="48"/>
-                    <div v-if="!data.item.get_category_with_sub_sub.image" class="avatar-xs d-inline-block mr-2">
-                      <div class="avatar-title bg-soft-primary rounded-circle text-primary">
-                        <i class="mdi mdi-account-circle m-0"></i>
-                      </div>
-                    </div>
-                    <h5 class="m-0 d-inline-block align-middle">
-                      <a href="#" class="text-dark">{{
-                          lang === 'ar' ? data.item.get_category_with_sub_sub.name_ar : data.item.get_category_with_sub_sub.name_en
-                        }}</a>
-                    </h5>
-                  </div>
                 </template>
 
                 <template v-slot:cell(Published)="data">
@@ -111,31 +95,12 @@
                       data.item.active ? 'Published' : 'UnPublished'
                     }}</span>
                 </template>
-                <template v-slot:cell(Featured)="data">
-                  <span class="badge badge-soft-success" :class="{'badge-soft-danger': data.item.in_home === 0}">{{
-                      data.item.in_home ? 'Featured' : 'UnFeatured'
-                    }}</span>
-                </template>
-                <template v-slot:cell(in_nav)="data">
-                  <span class="badge badge-soft-success" :class="{'badge-soft-danger': data.item.in_nav === 0}">{{
-                      data.item.in_nav ? 'In Nav' : 'Not In Nav'
-                    }}</span>
-                </template>
-
-                <template v-slot:cell(products_count)="data">
-                                <span v-if="data.item.products_count >= 0" class="badge" :class="{
-                      'badge-success': data.item.products_count <= 100,
-                      'badge-danger': data.item.products_count <= 0 ,
-                      'badge-warning':
-                        data.item.products_count >= 150
-                    }">{{ data.item.products_count }} {{ $t('Product') }}</span>
-                </template>
 
                 <template v-slot:cell(action)="data, index">
                   <ul class="list-inline table-action m-0">
                     <li class="list-inline-item">
                       <NuxtLink
-                        :to="`/ecommerce/${model}/${data.item.id}/edit`"
+                        :to="`/governorates/${model}/${data.item.id}/edit`"
                         class="action-icon text-primary"><i class="mdi mdi-square-edit-outline"></i></NuxtLink>
                     </li>
                     <li class="list-inline-item">
@@ -205,18 +170,18 @@ export default {
   },
   data() {
     return {
-      model: "subSubCategories",
+      model: "areas",
       Data: {},
       lang: 'ar',
-      title: "subSubCategories List",
+      title: "areas List",
       items: [{
         text: "Dashboard"
       },
         {
-          text: "subSubCategories"
+          text: "areas"
         },
         {
-          text: "subSubCategories List",
+          text: "areas List",
           active: true
         }
       ],
@@ -242,35 +207,21 @@ export default {
           label: ""
         },
         {
-          key: "subSubCategory",
+          key: "Area",
           sortable: true
         },
         {
-          key: "sub_category",
-          label: "subCategory",
+          key: "city",
+          label: "City",
           sortable: true
         },
         {
-          key: "get_category_with_sub_sub",
-          label: "Category",
+          key: "country",
+          label: "Country",
           sortable: true
         },
         {
           key: "Published",
-          sortable: true
-        },
-        {
-          key: "Featured",
-          sortable: true
-        },
-        {
-          key: "in_nav",
-          label: "In Nav",
-          sortable: true
-        },
-        {
-          key: "products_count",
-          label: "countProducts",
           sortable: true
         },
         {

@@ -26,7 +26,7 @@
             >
               <v-row
                 align="center"
-                class="mx-0">
+                class="mx-0 mb-3">
                 <v-col
                   cols="6"
                   sm="6"
@@ -51,12 +51,14 @@
                     hint="This field uses counter prop"
                     :label="$t('forms.general.name_en')"
                     clearable
-                    @change="setMetaData(1)"
                   ></v-text-field>
                 </v-col>
+              </v-row>
+              <v-row
+                align="center"
+                class="mx-0 mb-3">
                 <v-col
-                  cols="10"
-                  md="12">
+                  md="6">
                   <h4 class="header-title m-t-0">{{ $t('forms.general.upload_image') }}</h4>
                   <p :class="'font-13 m-b-30 ' + imageTextColor">{{ $t(imageText) }}</p>
                   <!-- file upload -->
@@ -71,78 +73,156 @@
                   <input type="file" name="image" id="image" class="form-control"
                          @change="onFileChange" accept="images/*" required/>
                 </v-col>
-                <v-col
-                  cols="10"
-                  md="12">
-                  <h4 class="header-title m-t-0">{{ $t('forms.sections.meta_section') }}</h4>
-                  <p class="text-muted font-13 m-b-30">{{ $t('forms.msg.meta_section') }}</p>
+                <v-col cols="6">
+                  <v-img
+                    :src="icon"
+                    :lazy-src="icon"
+                    aspect-ratio="1"
+                    class="grey lighten-4 rounded-xl"
+                    max-height="150"
+                    max-width="450"
+                    contain
+                  >
+                    <template v-slot:placeholder>
+                      <v-row
+                        class="fill-height ma-0"
+                        align="center"
+                        justify="center"
+                      >
+                        <v-progress-circular
+                          indeterminate
+                          color="grey lighten-2"
+                        ></v-progress-circular>
+                      </v-row>
+                    </template>
+                  </v-img>
+                </v-col>
+              </v-row>
+              <v-row
+                align="center"
+                class="mx-0 mb-3">
+                <v-col md="4">
                   <v-text-field
-                    v-model="meta_title"
-                    :rules="keywordRules"
+                    v-model="lat"
                     counter="191"
                     hint="This field uses counter prop"
-                    :label="$t('forms.general.meta_title')"
+                    :label="$t('forms.general.lat')"
                     clearable
                     outlined
                   ></v-text-field>
-                  <v-textarea
-                    v-model="meta_desc"
-                    :rules="descRules"
-                    :label="$t('forms.general.meta_desc')"
-                    rows="5"
+                </v-col>
+                <v-col md="4">
+                  <v-text-field
+                    v-model="lon"
+                    :label="$t('forms.general.lon')"
+                    clearable
+                    counter="191"
+                    hint="This field uses counter prop"
+                    outlined
+                  >
+                  </v-text-field>
+                </v-col>
+                <v-col md="4">
+                  <v-text-field
+                    v-model="exchange_rate_usd"
+                    :label="$t('forms.general.exchange_rate_usd')"
                     clearable
                     outlined
-                  >{{ name_en }}
-                  </v-textarea>
+                    type="number"
+                    prefix="%"
+                  >
+                  </v-text-field>
                 </v-col>
-                <v-col sm="6"></v-col>
+              </v-row>
+              <v-row
+                align="center"
+                class="mx-0 mb-3">
                 <v-col
-                  cols="6"
-                  sm="2"
+                  sm="6"
                 >
-                  <b-form-checkbox v-model="published"
-                                   switch
-                                   size="sm"
-                                   inline
-                                   class="float-right"
-                                   @change="changeStatus('published')"
+                  <h4 class="header-title m-t-0">{{ $t('forms.sections.payment_method') }}</h4>
+                  <v-col
+                    sm="6"
                   >
-                    <div><strong :class="publishedText">{{ $t('forms.general.published') }}</strong></div>
-                  </b-form-checkbox>
-
+                    <b-form-checkbox v-model="cash"
+                                     switch
+                                     size="sm"
+                                     inline
+                    >
+                      <div><strong :class="cash?on:off">{{
+                          $t('forms.general.cash')
+                        }}</strong>
+                      </div>
+                    </b-form-checkbox>
+                    <b-form-checkbox v-model="card"
+                                     switch
+                                     size="sm"
+                                     inline
+                    >
+                      <div><strong :class="card?on:off">{{
+                          $t('forms.general.card')
+                        }}</strong>
+                      </div>
+                    </b-form-checkbox>
+                    <b-form-checkbox v-model="kiosk"
+                                     switch
+                                     size="sm"
+                                     inline
+                    >
+                      <div><strong :class="kiosk?on:off">{{
+                          $t('forms.general.kiosk')
+                        }}</strong></div>
+                    </b-form-checkbox>
+                    <b-form-checkbox v-model="valu"
+                                     switch
+                                     size="sm"
+                                     inline
+                    >
+                      <div><strong :class="valu?on:off">{{
+                          $t('forms.general.valu')
+                        }}</strong>
+                      </div>
+                    </b-form-checkbox>
+                  </v-col>
                 </v-col>
                 <v-col
-                  cols="6"
-                  sm="2"
+                  sm="6"
                 >
-                  <b-form-checkbox v-model="featured"
-                                   switch
-                                   size="sm"
-                                   inline
-                                   @change="changeStatus('featured')"
+                  <h4 class="header-title m-t-0">{{ $t('forms.sections.actions') }}</h4>
+                  <v-col
+                    sm="6"
                   >
-                    <div><strong :class="featuredText">{{ $t('forms.general.featured') }}</strong></div>
-                  </b-form-checkbox>
-                </v-col>                <v-col
-                  cols="6"
-                  sm="2"
-                >
-                                  <b-form-checkbox v-model="in_nav"
-                                   switch
-                                   size="sm"
-                                   inline
-                                   @change="changeStatus('in_nav')"
-                  >
-                    <div><strong :class="in_navText">{{ $t('forms.general.in_nav') }}</strong></div>
-                  </b-form-checkbox>
+                    <b-form-checkbox v-model="published"
+                                     switch
+                                     size="sm"
+                                     inline
+                    >
+                      <div><strong :class="published?on:off">{{ $t('forms.general.published') }}</strong>
+                      </div>
+                    </b-form-checkbox>
+                    <b-form-checkbox v-model="defaultt"
+                                     switch
+                                     size="sm"
+                                     inline
+                    >
+                      <div><strong :class="defaultt?on:off">{{ $t('forms.general.default') }}</strong>
+                      </div>
+                    </b-form-checkbox>
+                  </v-col>
                 </v-col>
+              </v-row>
+              <v-row
+                align="center"
+                class="mx-0 mb-3">
                 <v-col
                   cols="12"
                   md="12">
-                  <b-button class="btn-rounded ml-1 text-white" @click="validate" variant="success"><span
-                    class="btn-label"><i class="mdi mdi-check-all"></i></span>{{ $t('forms.buttons.submit') }}
+                  <b-button class="btn-rounded ml-1 text-white" @click="validate" variant="success">
+                    <span
+                      class="btn-label"><i class="mdi mdi-check-all"></i></span>{{ $t('forms.buttons.submit') }}
                   </b-button>
-                  <b-button class="btn-rounded ml-1 text-white" @click="reset" variant="danger"><span class="btn-label"><i
+                  <b-button class="btn-rounded ml-1 text-white" @click="reset" variant="danger"><span
+                    class="btn-label"><i
                     class="mdi mdi-close-circle-outline"></i></span>{{ $t('forms.buttons.reset') }}
                   </b-button>
                 </v-col>
@@ -151,18 +231,15 @@
           </v-card-text>
         </v-card>
       </v-col>
-      <v-col
-        cols="12"
-        md="1">
-      </v-col>
-
     </v-row>
   </div>
 </template>
 
+
 <script>
 import vue2Dropzone from 'vue2-dropzone'
 import Swal from "sweetalert2";
+
 export default {
   components: {
     vueDropzone: vue2Dropzone
@@ -170,21 +247,28 @@ export default {
   data: () => ({
     valid: true,
     loading: true,
-    model: "categories",
-    title: "Create Category",
-    publishedText: "text-success",
-    featuredText: "text-muted",
-    in_navText: "text-muted",
+    model: "countries",
+    title: 'Create Countries',
+    on: "text-success",
+    off: "text-muted",
+    published: true,
+    defaultt: false,
+    cash: true,
+    card: false,
+    kiosk: false,
+    valu: false,
+    icon: '',
+    exchange_rate_usd: 1.00,
     items: [{
       text: 'Dashboard',
       href: '/',
     },
       {
-        text: 'Categories',
-        href: '/ecommerce/categories',
+        text: 'Countries',
+        href: '/governorates/countries',
       },
       {
-        text: 'Edit',
+        text: 'create',
         active: true,
       },
     ],
@@ -199,8 +283,8 @@ export default {
     imageTextColor: "text-muted",
     name_ar: '',
     name_en: '',
-    meta_title: '',
-    meta_desc: '',
+    lat: '',
+    lon: '',
     nameArRules: [
       v => !!v || 'Name Arabic is required',
       v => (v && v.length <= 190) || 'Name Arabic must be less than 190 characters',
@@ -210,17 +294,6 @@ export default {
       v => (v && v.length <= 190) || 'Name English must be less than 190 characters',
     ],
 
-    keywordRules: [
-      v => !!v || 'Description Arabic is required',
-      v => (v && v.length <= 190) || 'Name Arabic must be less than 190 characters',
-    ],
-    descRules: [
-      v => !!v || 'Description English is required',
-    ],
-    published: true,
-    featured: false,
-    in_nav: false,
-    id: "",
   }),
 
   mounted() {
@@ -237,11 +310,17 @@ export default {
             this.record = response.data.data
             this.name_ar = this.record.name_ar
             this.name_en = this.record.name_en
-            this.meta_title = this.record.meta_title
-            this.meta_desc = this.record.meta_description
             this.published = this.record.active ? true : false
-            this.featured = this.record.in_home ? true : false
-            this.in_nav = this.record.in_nav ? true : false
+            this.defaultt = this.record.default ? true : false,
+              this.cash = this.record.cash ? true : false,
+              this.card = this.record.accept_card ? true : false,
+              this.kiosk = this.record.accept_kiosk ? true : false,
+              this.valu = this.record.accept_valu ? true : false,
+              this.exchange_rate_usd = this.record.exchange_rate_usd,
+              this.lat = this.record.lat,
+              this.lon = this.record.lon,
+              this.icon = this.record.icon
+
           } else {
             this.error_message = response.data.message
             Swal.fire({
@@ -252,7 +331,8 @@ export default {
               showConfirmButton: true,
               timer: 5000
             })
-          }        }).catch((error, code) => {
+          }
+        }).catch((error, code) => {
         Swal.fire({
           icon: 'error',
           title: 'Oops...',
@@ -266,14 +346,16 @@ export default {
       this.$axios.put(this.model + '/' + this.id + '/update', {
         name_ar: this.name_ar,
         name_en: this.name_en,
-        meta_title: this.meta_title,
-        meta_description: this.meta_desc,
         active: this.published,
-        in_home: this.featured,
-        in_nav: this.in_nav,
-        parent_id:0,
-        type:0,
-        image: this.photo
+        default: this.defaultt,
+        cash: this.cash,
+        accept_card: this.card,
+        accept_kiosk: this.kiosk,
+        accept_valu: this.valu,
+        exchange_rate_usd: this.exchange_rate_usd,
+        icon: this.photo,
+        lat: this.lat,
+        lon: this.lon
       })
         .then(response => {
           if (response.data.status === 200) {
@@ -285,7 +367,7 @@ export default {
               showConfirmButton: false,
               timer: 1500
             })
-            this.$router.push('/ecommerce/'+this.model)
+            this.$router.push('/governorates/' + this.model)
           } else {
             this.error_message = response.data.message
             Swal.fire({
@@ -305,28 +387,6 @@ export default {
           text: error,
         })
       })
-    },
-
-    changeStatus(el) {
-      if (el === 'published') {
-        if (this.published) {
-          this.publishedText = "text-success";
-        } else {
-          this.publishedText = "text-muted";
-        }
-      } else if (el === 'featured') {
-        if (this.featured) {
-          this.featuredText = "text-success";
-        } else {
-          this.featuredText = "text-muted";
-        }
-      } else if (el === 'in_nav') {
-        if (this.in_nav) {
-          this.in_navText = "text-success";
-        } else {
-          this.in_navText = "text-muted";
-        }
-      }
     },
 
     onFileChange(e) {
@@ -350,16 +410,6 @@ export default {
       reader.readAsDataURL(file)
     },
 
-    setMetaData(from) {
-      if (from === 1) {
-        this.meta_desc = this.name_en;
-        this.meta_title = this.name_en;
-      } else if (from === 2) {
-        this.meta_desc = this.desc_en;
-        this.meta_title = this.name_en;
-      }
-    },
-
     validate() {
       if (this.$refs.form.validate()) {
         this.loading = true;
@@ -374,7 +424,8 @@ export default {
     resetValidation() {
       this.$refs.form.resetValidation()
     },
-
   }
 }
 </script>
+
+

@@ -37,8 +37,15 @@
       "exchange_rate_usd": "Exchange Rate To USD",
       "action": "Action",
       "display": "Display",
-      "countProducts": "Count Products"
-
+      "countProducts": "Count Products",
+      "delivery_price": "Delivery Price",
+      "delivery_free": "Delivery Free",
+      "delivery_time": "Delivery Time",
+      "smsa": "Shipping By Smsa",
+      "posta": "Shipping By Posta",
+      "self": "Shipping By Self",
+      "Countries": "Countries",
+      "Cities": "Cities"
     },
     "buttons": {
       "submit": "Submit",
@@ -53,7 +60,8 @@
     "sections": {
       "meta_section": "Meta Section",
       "payment_method": "Payment Method Section",
-      "actions": "Actions Section"
+      "actions": "Actions Section",
+      "shipping_method": "Shipping Method Section"
     },
     "msg": {
       "meta_section": "if you not fill this section, will fill all automatically from your data -_-"

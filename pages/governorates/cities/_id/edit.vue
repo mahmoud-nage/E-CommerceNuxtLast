@@ -51,107 +51,171 @@
                     hint="This field uses counter prop"
                     :label="$t('forms.general.name_en')"
                     clearable
-                    @change="setMetaData(1)"
                   ></v-text-field>
                 </v-col>
-                <v-col
-                  cols="10"
-                  md="12">
-                  <h4 class="header-title m-t-0">{{ $t('forms.general.upload_image') }}</h4>
-                  <p :class="'font-13 m-b-30 ' + imageTextColor">{{ $t(imageText) }}</p>
-                  <!-- file upload -->
-                  <!--                  <vue-dropzone id="dropzone" ref="myVueDropzone" @change="onFileChange" :use-custom-slot="true" :options="dropzoneOptions" required>-->
-                  <!--                    <div class="dz-message needsclick">-->
-                  <!--                      <i class="h1 text-muted ri-upload-cloud-2-line"></i>-->
-                  <!--                      <h3>Drop files here or click to upload.</h3>-->
-                  <!--                      <span class="text-muted font-13">(This is just a demo dropzone. Selected files are-->
-                  <!--                                <strong>not</strong> actually uploaded.)</span>-->
-                  <!--                    </div>-->
-                  <!--                  </vue-dropzone>-->
-                  <input type="file" name="image" id="image" class="form-control"
-                         @change="onFileChange" accept="images/*" required/>
-                </v-col>
-                <v-col
-                  cols="10"
-                  md="12">
-                  <h4 class="header-title m-t-0">{{ $t('forms.sections.meta_section') }}</h4>
-                  <p class="text-muted font-13 m-b-30">{{ $t('forms.msg.meta_section') }}</p>
+              </v-row>
+
+
+              <v-row
+                align="center"
+                class="mx-0">
+                <v-col md="4">
                   <v-text-field
-                    v-model="meta_title"
-                    :rules="keywordRules"
-                    counter="191"
-                    hint="This field uses counter prop"
-                    :label="$t('forms.general.meta_title')"
+                    v-model="delivery_price"
+                    :label="$t('forms.general.delivery_price')"
+                    type="number"
                     clearable
                     outlined
+                    prefix="$"
                   ></v-text-field>
-                  <v-textarea
-                    v-model="meta_desc"
-                    :rules="descRules"
-                    :label="$t('forms.general.meta_desc')"
-                    rows="5"
+                </v-col>
+                <v-col md="4">
+                  <v-text-field
+                    v-model="delivery_time"
+                    :label="$t('forms.general.delivery_time')"
+                    type="number"
                     clearable
                     outlined
-                  >{{ name_en }}
-                  </v-textarea>
-                </v-col>
-                <v-col sm="6">
-                  <b-form-select
-                    v-model="parent_id"
-                    size="sm"
-                    :options="categories"
-                    :label="$t('forms.general.Categories')"
-                    disabled-field="selected"
-                  ></b-form-select>&nbsp;
+                    prefix="Per Min: "
+                  >
+                  </v-text-field>
                 </v-col>
                 <v-col
-                  cols="6"
-                  sm="2"
+                  sm="4"
                 >
-                  <b-form-checkbox v-model="published"
+                  <b-form-checkbox v-model="delivery_free"
                                    switch
                                    size="sm"
                                    inline
-                                   class="float-right"
-                                   @change="changeStatus('published')"
+                                   style="margin: auto;display: table;"
                   >
-                    <div><strong :class="publishedText">{{ $t('forms.general.published') }}</strong></div>
+                    <div><strong :class="delivery_free?on:off">{{
+                        $t('forms.general.delivery_free')
+                      }}</strong>
+                    </div>
                   </b-form-checkbox>
+                </v-col>
+              </v-row>
+
+
+              <v-row
+                align="center"
+                class="mx-0">
+                <v-col md="4">
+                  <h5 class="header-title m-t-0">{{ $t('forms.general.Countries') }}</h5>
+
+                  <b-form-select
+                    v-model="country_id"
+                    size="sm"
+                    :options="countries"
+                    :label="$t('forms.general.Countries')"
+                    v-validate="'required'"
+                  ></b-form-select>&nbsp;
+
+                  <!--                  <v-select-->
+                  <!--                    v-model="country_id"-->
+                  <!--                    :hint="`${country_id.text}, ${country_id.abbr}`"-->
+                  <!--                    :items="countries"-->
+                  <!--                    item-text="text"-->
+                  <!--                    item-value="value"-->
+                  <!--                    label="Select"-->
+                  <!--                    persistent-hint-->
+                  <!--                    return-object-->
+                  <!--                    single-line-->
+                  <!--                  ></v-select>-->
+
+
+                </v-col>
+                <v-col md="4">
+                  <v-text-field
+                    v-model="lat"
+                    :label="$t('forms.general.lat')"
+                    clearable
+                    counter="191"
+                    hint="This field uses counter prop"
+                    outlined
+                  >
+                  </v-text-field>
+                </v-col>
+                <v-col md="4">
+                  <v-text-field
+                    v-model="lon"
+                    :label="$t('forms.general.lon')"
+                    clearable
+                    counter="191"
+                    hint="This field uses counter prop"
+                    outlined
+                  >
+                  </v-text-field>
+                </v-col>
+              </v-row>
+              <v-row
+                align="center"
+                class="mx-0">
+                <v-col
+                  sm="6"
+                >
+                  <h4 class="header-title m-t-0">{{ $t('forms.sections.shipping_method') }}</h4>
+                  <v-col
+                    sm="6"
+                  >
+                    <b-form-checkbox v-model="self"
+                                     switch
+                                     size="sm"
+                                     inline
+                    >
+                      <div><strong :class="self?on:off">{{ $t('forms.general.self') }}</strong>
+                      </div>
+                    </b-form-checkbox>
+                    <b-form-checkbox v-model="smsa"
+                                     switch
+                                     size="sm"
+                                     inline
+                    >
+                      <div><strong :class="smsa?on:off">{{ $t('forms.general.smsa') }}</strong>
+                      </div>
+                    </b-form-checkbox>
+                    <b-form-checkbox v-model="posta"
+                                     switch
+                                     size="sm"
+                                     inline
+                    >
+                      <div><strong :class="posta?on:off">{{ $t('forms.general.posta') }}</strong>
+                      </div>
+                    </b-form-checkbox>
+                  </v-col>
 
                 </v-col>
                 <v-col
-                  cols="6"
-                  sm="2"
+                  sm="6"
                 >
-                  <b-form-checkbox v-model="featured"
-                                   switch
-                                   size="sm"
-                                   inline
-                                   @change="changeStatus('featured')"
+                  <h4 class="header-title m-t-0">{{ $t('forms.sections.actions') }}</h4>
+                  <v-col
+                    sm="6"
                   >
-                    <div><strong :class="featuredText">{{ $t('forms.general.featured') }}</strong></div>
-                  </b-form-checkbox>
+                    <b-form-checkbox v-model="published"
+                                     switch
+                                     size="sm"
+                                     inline
+                    >
+                      <div><strong :class="published?on:off">{{ $t('forms.general.published') }}</strong></div>
+                    </b-form-checkbox>
+                  </v-col>
                 </v-col>
-                <v-col
-                  cols="6"
-                  sm="2"
-                >
-                  <b-form-checkbox v-model="in_nav"
-                                   switch
-                                   size="sm"
-                                   inline
-                                   @change="changeStatus('in_nav')"
-                  >
-                    <div><strong :class="in_navText">{{ $t('forms.general.in_nav') }}</strong></div>
-                  </b-form-checkbox>
-                </v-col>
+              </v-row>
+
+              <v-row
+                align="center"
+                class="mx-0"
+              >
                 <v-col
                   cols="12"
                   md="12">
                   <b-button class="btn-rounded ml-1 text-white" @click="validate" variant="success"><span
                     class="btn-label"><i class="mdi mdi-check-all"></i></span>{{ $t('forms.buttons.submit') }}
                   </b-button>
-                  <b-button class="btn-rounded ml-1 text-white" @click="reset" variant="danger"><span class="btn-label"><i
+                  <b-button class="btn-rounded ml-1 text-white" @click="reset" variant="danger"><span
+                    class="btn-label"><i
                     class="mdi mdi-close-circle-outline"></i></span>{{ $t('forms.buttons.reset') }}
                   </b-button>
                 </v-col>
@@ -169,95 +233,110 @@
   </div>
 </template>
 
+
 <script>
-import vue2Dropzone from 'vue2-dropzone'
 import Swal from "sweetalert2";
 
 export default {
-  components: {
-    vueDropzone: vue2Dropzone
-  },
+
   data: () => ({
     valid: true,
     loading: true,
-    lang: 'ar',
-    model: "subCategories",
-    title: "Create Sub Categories",
-    publishedText: "text-success",
-    featuredText: "text-muted",
-    in_navText: "text-muted",
-    categories: [],
-    parent_id: 0,
+
+    model: "cities",
+    title: 'Create Countries',
+    on: "text-success",
+    off: "text-muted",
 
     items: [{
       text: 'Dashboard',
       href: '/',
     },
       {
-        text: 'Categories',
-        href: '/ecommerce/subCategories',
+        text: 'Countries',
+        href: '/governorates/cities',
       },
       {
-        text: 'Edit',
+        text: 'create',
         active: true,
       },
     ],
-    dropzoneOptions: {
-      url: 'https://httpbin.org/post',
-      thumbnailWidth: 150,
-      maxFilesize: 0.5,
-      maxFiles: 1,
-    },
-    imageText: "DropzoneJS is an open source library that provides drag’n’drop\n" +
-      "                    file uploads with image previews.",
-    imageTextColor: "text-muted",
-    name_ar: '',
-    name_en: '',
-    meta_title: '',
-    meta_desc: '',
-    nameArRules: [
+    name_ar : '',
+    name_en : '',
+    lat : '',
+    lon : '',
+    self: true,
+    smsa: false,
+    posta: false,
+    countries:[
+    ],
+    published: true,
+    delivery_free: false,
+    delivery_price: 0,
+    delivery_time: 1,
+    country_id: 0,
+    nameArRules : [
       v => !!v || 'Name Arabic is required',
       v => (v && v.length <= 190) || 'Name Arabic must be less than 190 characters',
     ],
-    nameEnRules: [
+    nameEnRules : [
       v => !!v || 'Name English is required',
       v => (v && v.length <= 190) || 'Name English must be less than 190 characters',
     ],
 
-    keywordRules: [
-      v => !!v || 'Description Arabic is required',
-      v => (v && v.length <= 190) || 'Name Arabic must be less than 190 characters',
-    ],
-    descRules: [
-      v => !!v || 'Description English is required',
-    ],
-    published: true,
-    featured: false,
-    in_nav: false,
-    id: "",
   }),
+
 
   mounted() {
     this.id = this.$route.params.id
     this.getRecord()
-    this.getCategories()
+    this.getCountries()
   },
 
   methods: {
+    getCountries(){
+      this.$axios.get('countries?to=-1', {
+        headers:{
+          'lang': 'ar'
+        }
+      }).then((response) => {
+        this.allCountries = response.data.data;
+        this.country_id = this.allCountries[0].id;
+        for (var i=0; i < this.allCountries.length; i++){
+          this.countries.push({
+            'value': this.allCountries[i].id,
+            'text': this.lang=='ar'?this.allCountries[i].name_ar:this.allCountries[i].name_en,
+            'abbr': this.allCountries[i].code??'',
+          })
+        }
+
+      }).catch((error) => {
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: error,
+        })
+      });
+    }
+    ,
     getRecord() {
       this.$axios.get(this.model + '/' + this.id)
         .then(response => {
           if (response.data.status === 200) {
-            console.log('sub');
+            console.log(response.data.data);
             this.record = response.data.data
             this.name_ar = this.record.name_ar
             this.name_en = this.record.name_en
-            this.meta_title = this.record.meta_title
-            this.meta_desc = this.record.meta_description
+            this.lat = this.record.lat
+            this.lon = this.record.lon
             this.published = this.record.active ? true : false
-            this.featured = this.record.in_home ? true : false
-            this.in_nav = this.record.in_nav ? true : false
-            this.parent_id = this.record.parent_id
+              this.delivery_free = this.record.delivery_free ? true : false,
+              this.self = this.record.self ? true : false,
+              this.smsa = this.record.smsa ? true : false,
+              this.posta = this.record.posta ? true : false,
+              this.delivery_time = this.record.delivery_time,
+              this.delivery_price = this.record.delivery_price,
+              this.country_id = this.record.country_id
           } else {
             this.error_message = response.data.message
             Swal.fire({
@@ -276,53 +355,24 @@ export default {
           text: error,
         })
       })
-    },
-    getCategories() {
-      this.$axios.get('categories?to=-1', {
-        headers: {
-          'lang': 'ar'
-        }
-      }).then((response) => {
-        this.allCategories = response.data.data;
-        // console.log(response.data.data, this.allCategories.length, this.allCategories);
-        console.log('cat', this.parent_id);
-        for (var i = 0; i < this.allCategories.length; i++) {
-          if (this.parent_id === this.allCategories[i].id) {
-            console.log('haa');
-            this.categories.push({
-              'value': this.allCategories[i].id,
-              'text': this.lang == 'ar' ? this.allCategories[i].name_ar : this.allCategories[i].name_en,
-              'selected': true,
-            })
-          } else {
-            this.categories.push({
-              'value': this.allCategories[i].id,
-              'text': this.lang == 'ar' ? this.allCategories[i].name_ar : this.allCategories[i].name_en
-            })
-          }
-        }
-
-      }).catch((error) => {
-        Swal.fire({
-          icon: 'error',
-          title: 'Oops...',
-          text: error,
-        })
-      });
-    },
+    }
+    ,
     updateRecord() {
       this.loading = true
       this.$axios.put(this.model + '/' + this.id + '/update', {
         name_ar: this.name_ar,
         name_en: this.name_en,
-        meta_title: this.meta_title,
-        meta_description: this.meta_desc,
+        lat: this.lat,
+        lon: this.lon,
+        country_id: this.country_id,
+        locales: this.locales,
         active: this.published,
-        in_home: this.featured,
-        in_nav: this.in_nav,
-        parent_id: this.parent_id,
-        type: 1,
-        image: this.photo
+        delivery_free: this.delivery_free,
+        delivery_price: this.delivery_price,
+        delivery_time: this.delivery_time,
+        self: this.self,
+        smsa: this.smsa,
+        posta: this.posta,
       })
         .then(response => {
           if (response.data.status === 200) {
@@ -334,7 +384,7 @@ export default {
               showConfirmButton: false,
               timer: 1500
             })
-            this.$router.push('/ecommerce/' + this.model)
+            this.$router.push('/governorates/' + this.model)
           } else {
             this.error_message = response.data.message
             Swal.fire({
@@ -354,69 +404,28 @@ export default {
           text: error,
         })
       })
-    },
-    changeStatus(el) {
-      if (el === 'published') {
-        if (this.published) {
-          this.publishedText = "text-success";
-        } else {
-          this.publishedText = "text-muted";
-        }
-      } else if (el === 'featured') {
-        if (this.featured) {
-          this.featuredText = "text-success";
-        } else {
-          this.featuredText = "text-muted";
-        }
-      } else if (el === 'in_nav') {
-        if (this.in_nav) {
-          this.in_navText = "text-success";
-        } else {
-          this.in_navText = "text-muted";
-        }
-      }
-    },
-    onFileChange(e) {
-      console.log('file changes');
-      var files = e.target.files || e.dataTransfer.files;
-      if (!files.length || !files.length > 1) {
-        this.imageText = "Some Thing went wrong";
-        return
-      }
-      this.createImage(files[0])
-    },
-    createImage(file) {
-      var photo = new Image();
-      var reader = new FileReader();
-      var vm = this;
-
-      reader.onload = (e) => {
-        vm.photo = e.target.result
-        console.log(vm.photo);
-      };
-      reader.readAsDataURL(file)
-    },
-    setMetaData(from) {
-      if (from === 1) {
-        this.meta_desc = this.name_en;
-        this.meta_title = this.name_en;
-      } else if (from === 2) {
-        this.meta_desc = this.desc_en;
-        this.meta_title = this.name_en;
-      }
-    },
-    validate() {
+    }
+    ,
+    validate()
+    {
       if (this.$refs.form.validate()) {
         this.loading = true;
         this.updateRecord()
       }
-    },
-    reset() {
+    }
+    ,
+    reset()
+    {
       this.$refs.form.reset()
-    },
-    resetValidation() {
+    }
+    ,
+    resetValidation()
+    {
       this.$refs.form.resetValidation()
-    },
+    }
+    ,
   }
 }
 </script>
+
+
