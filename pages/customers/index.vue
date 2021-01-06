@@ -8,9 +8,9 @@
                 <div class="card-body">
                     <div class="row mb-2">
                       <div class="col-sm-6">
-                        <b-button class="btn-rounded ml-1 text-white" variant="success" :to="`/${model}/create`" dark><span
-                          class="btn-label"><i class="mdi mdi-plus"></i></span>{{ $t('Create') }}
-                        </b-button>
+<!--                        <b-button class="btn-rounded ml-1 text-white" variant="success" :to="`/${model}/create`" dark><span-->
+<!--                          class="btn-label"><i class="mdi mdi-plus"></i></span>{{ $t('Create') }}-->
+<!--                        </b-button>-->
                       </div>
                       <div class="col-sm-6">
                         <div class="float-sm-right">

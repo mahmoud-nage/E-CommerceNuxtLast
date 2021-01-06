@@ -102,7 +102,7 @@
             <div class="row" v-if="this.totalRows > this.perPage">
               <div class="col">
                 <div class="dataTables_paginate paging_simple_numbers float-right">
-                  <ul class="pagination rounded">
+                  <ul class="pagination pagination-rounded">
                     <li>
                           <a href="#" class="btn btn-icon btn-sm btn-light mr-2 my-1" :class="prev ? 'disabled' : ''"
                              @click="prevStep">

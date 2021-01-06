@@ -8,9 +8,9 @@
           <div class="card-body">
             <div class="row mb-2">
               <div class="col-sm-6">
-                <b-button class="btn-rounded ml-1 text-white" variant="success" :to="`/${model}/create`" dark><span
-                  class="btn-label"><i class="mdi mdi-plus"></i></span>{{ $t('Create') }}
-                </b-button>
+<!--                <b-button class="btn-rounded ml-1 text-white" variant="success" :to="`/${model}/create`" dark><span-->
+<!--                  class="btn-label"><i class="mdi mdi-plus"></i></span>{{ $t('Create') }}-->
+<!--                </b-button>-->
               </div>
               <div class="col-sm-6">
                 <div class="float-sm-right">
@@ -28,7 +28,7 @@
                 <div id="tickets-table_length" class="dataTables_length">
                   <label class="d-inline-flex align-items-center">
                     Display&nbsp;
-                    <b-form-select v-model="perPage" size="sm" :options="pageOptions"></b-form-select>&nbsp;Customers
+                    <b-form-select v-model="perPage" size="sm" :options="pageOptions"></b-form-select>&nbsp;Sellers
                   </label>
                 </div>
               </div>
@@ -65,12 +65,21 @@
                   {{ data.item.amount_pay }}
                 </template>
 
+                <template v-slot:cell(balance)="data">
+                  {{ data.item.balance }}
+                </template>
+                <template v-slot:cell(all_sales)="data">
+                  {{ data.item.all_sales }}
+                </template>
                 <template v-slot:cell(orders)="data">
-                  {{ data.item.orders_count }}
+                  {{ data.item.order_details_count }}
                 </template>
-                <template v-slot:cell(last_order)="data">
-                  {{ data.item.orders[0].created_at }}
+                <template v-slot:cell(products_count)="data">
+                  {{ data.item.products_count }}
                 </template>
+<!--                <template v-slot:cell(last_order)="data">-->
+<!--                  {{ data.item.order_details ?? data.item.order_details[0].created_at }}-->
+<!--                </template>-->
                 <template v-slot:cell(created_at)="data">
                   {{ data.item.user.created_at }}
                 </template>
@@ -79,7 +88,7 @@
                   <span class="badge" :class="{'badge-soft-success': data.item.status === 'Active', 'badge-soft-danger': data.item.status === 'Blocked'}"> {{ data.item.status }}</span>
                 </template>
 
-                <template v-slot:cell(Customer)="data">
+                <template v-slot:cell(Seller)="data">
                   <div class="media">
                     <img v-if="data.item.user.avatar" :src="data.item.user.avatar" alt="table-user" class="mr-3 rounded-circle avatar-sm" />
                     <div v-if="!data.item.user.avatar" class="avatar-sm mr-3">
@@ -161,7 +170,7 @@
 <script>
 import Swal from "sweetalert2";
 /**
- * Customers component
+ * Sellers component
  */
 export default {
   head() {
@@ -171,10 +180,10 @@ export default {
   },
   data() {
     return {
-      model: "customers",
+      model: "sellers",
       Data: {},
       lang:'ar',
-      title: "Customers List",
+      title: "Sellers List",
       items: [{
         text: "Dashboard"
       },
@@ -182,7 +191,7 @@ export default {
           text: "Users"
         },
         {
-          text: "Customers List",
+          text: "Sellers List",
           active: true
         }
       ],
@@ -209,7 +218,7 @@ export default {
         label: ""
       },
         {
-          key: "Customer",
+          key: "Seller",
           sortable: true
         },
         {
@@ -223,6 +232,12 @@ export default {
         },
         {
           key: "balance",
+          label: "Balance",
+          sortable: true
+        },
+        {
+          key: "all_sales",
+          label: "Sales",
           sortable: true
         },
         {
@@ -232,6 +247,16 @@ export default {
         {
           key: "last_order",
           label: "Last Order",
+          sortable: true
+        },
+        {
+          key: "products_count",
+          label: "Products",
+          sortable: true
+        },
+        {
+          key: "last_product",
+          label: "Last Product",
           sortable: true
         },
         {
