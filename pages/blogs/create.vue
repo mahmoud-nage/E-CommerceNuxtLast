@@ -51,13 +51,43 @@
                     hint="This field uses counter prop"
                     :label="$t('forms.general.name_en')"
                     clearable
+                    @change="setMetaData(1)"
                   ></v-text-field>
+                </v-col>
+                <v-col
+                  cols="6"
+                  sm="6"
+                >
+                  <v-textarea
+                    v-model="desc_ar"
+                    :rules="descArRules"
+                    :label="$t('forms.general.desc_ar')"
+                    rows="5"
+                    clearable
+                    outlined
+                  >{{ desc_ar }}
+                  </v-textarea>
+
+                </v-col>
+                <v-col
+                  cols="6"
+                  sm="6"
+                >
+                  <v-textarea
+                    v-model="desc_en"
+                    :rules="descEnRules"
+                    :label="$t('forms.general.desc_en')"
+                    rows="5"
+                    clearable
+                    outlined
+                  >{{ desc_en }}
+                  </v-textarea>
                 </v-col>
                 <v-col
                   cols="10"
                   md="12">
-                  <h4 class="header-title m-t-0">Dropzone File Upload</h4>
-                  <p class="text-muted font-13 m-b-30">{{imageText}}</p>
+                  <h4 class="header-title m-t-0">{{ $t('forms.general.upload_image') }}</h4>
+                  <p :class="'font-13 m-b-30 ' + imageTextColor">{{ $t(imageText) }}</p>
                   <!-- file upload -->
                   <!--                  <vue-dropzone id="dropzone" ref="myVueDropzone" @change="onFileChange" :use-custom-slot="true" :options="dropzoneOptions" required>-->
                   <!--                    <div class="dz-message needsclick">-->
@@ -68,13 +98,13 @@
                   <!--                    </div>-->
                   <!--                  </vue-dropzone>-->
                   <input type="file" name="image" id="image" class="form-control"
-                         @change="onFileChange" accept="images/*"/>
+                         @change="onFileChange" accept="images/*" required/>
                 </v-col>
                 <v-col
                   cols="10"
                   md="12">
                   <h4 class="header-title m-t-0">{{ $t('forms.sections.meta_section') }}</h4>
-                  <p class="text-muted font-13 m-b-30">{{$t('forms.msg.meta_section')}}</p>
+                  <p class="text-muted font-13 m-b-30">{{ $t('forms.msg.meta_section') }}</p>
                   <v-text-field
                     v-model="meta_title"
                     :rules="keywordRules"
@@ -91,21 +121,35 @@
                     rows="5"
                     clearable
                     outlined
-                  ></v-textarea>
+                  >{{ name_en }}
+                  </v-textarea>
                 </v-col>
-                <v-col sm="8"></v-col>
+                  <v-col sm="6">
+                    <b-form-select v-model="blog_departments_id" size="sm" :options="departments" :label="$t('forms.general.Departments')" ></b-form-select>&nbsp;
+                  </v-col>
                 <v-col
                   cols="6"
-                  sm="2"
+                  sm="6"
                 >
                   <b-form-checkbox v-model="published"
                                    switch
                                    size="sm"
                                    inline
                                    class="float-right"
-                                   @change="changeStatus('published')"
                   >
-                    <div><strong :class="publishedText">{{ $t('forms.general.published') }}</strong></div>
+                    <div><strong :class="published?`text-success`:`text-muted`">{{
+                        $t('forms.general.published')
+                      }}</strong></div>
+                  </b-form-checkbox>
+                  <b-form-checkbox v-model="featured"
+                                   switch
+                                   size="sm"
+                                   inline
+                                   class="float-right"
+                  >
+                    <div><strong :class="featured?`text-success`:`text-muted`">{{
+                        $t('forms.general.featured')
+                      }}</strong></div>
                   </b-form-checkbox>
 
                 </v-col>
@@ -113,14 +157,6 @@
                   cols="6"
                   sm="2"
                 >
-                  <b-form-checkbox v-model="featured"
-                                   switch
-                                   size="sm"
-                                   inline
-                                   @change="changeStatus('featured')"
-                  >
-                    <div><strong :class="featuredText">{{ $t('forms.general.featured') }}</strong></div>
-                  </b-form-checkbox>
                 </v-col>
                 <v-col
                   cols="12"
@@ -148,30 +184,26 @@
 
 
 <script>
-
-import Switches from 'vue-switches'
 import vue2Dropzone from 'vue2-dropzone'
+import Swal from "sweetalert2";
 
 export default {
   components: {
-    Switches,
     vueDropzone: vue2Dropzone
   },
-
   data: () => ({
     valid: true,
     loading: true,
-    model: "brands",
-    title: 'Create Brands',
-    publishedText: "text-success",
-    featuredText: "text-muted",
+    model: "blogs",
+    departments: [],
+    title: 'Create Blogs',
     items: [{
       text: 'Dashboard',
       href: '/',
     },
       {
-        text: 'Brands',
-        href: '/ecommerce/brands',
+        text: 'Blogs',
+        href: '/blogs',
       },
       {
         text: 'create',
@@ -186,10 +218,14 @@ export default {
     },
     imageText: "DropzoneJS is an open source library that provides drag’n’drop\n" +
       "                    file uploads with image previews.",
+    imageTextColor: "text-muted",
     name_ar: '',
     name_en: '',
+    desc_ar: '',
+    desc_en: '',
     meta_title: '',
     meta_desc: '',
+    blog_departments_id: '',
     nameArRules: [
       v => !!v || 'Name Arabic is required',
       v => (v && v.length <= 190) || 'Name Arabic must be less than 190 characters',
@@ -198,10 +234,18 @@ export default {
       v => !!v || 'Name English is required',
       v => (v && v.length <= 190) || 'Name English must be less than 190 characters',
     ],
+    descArRules: [
+      v => !!v || 'Name Arabic is required',
+      v => (v && v.length <= 190) || 'Description Arabic must be less than 190 characters',
+    ],
+    descEnRules: [
+      v => !!v || 'Name English is required',
+      v => (v && v.length <= 190) || 'Description English must be less than 190 characters',
+    ],
 
     keywordRules: [
       v => !!v || 'Title Arabic is required',
-      v => (v && v.length <= 190) || 'Name Arabic must be less than 190 characters',
+      v => (v && v.length <= 190) || 'Keyword Arabic must be less than 190 characters',
     ],
     descRules: [
       v => !!v || 'Description English is required',
@@ -210,46 +254,77 @@ export default {
     featured: false,
   }),
 
-  methods: {
-    createRecord() {
-      console.log(this.name_ar);
-      this.loading = true
-      this.$axios.post("https://almurafiq.dev-krito.com/api/" + this.model + '/store', {
-        bank_name_ar: this.name_ar,
-        bank_name_en: this.name_ar,
-        branch_name_ar: this.name_ar,
-        branch_name_en: this.name_ar,
-        owner_name_ar: this.name_ar,
-        owner_name_en: this.name_ar,
-        account_num: this.name_ar,
-        swift_num: this.name_ar
-      })
-        .then(response => {
-          if (response.data.status == '500') {
-            this.error_message = 'email is Repeated'
-          } else {
-            this.loading = false
-            this.$router.push('/ecommerce/brands')
-          }
+  mounted() {
+    this.getBlogDepartments();
+  },
 
-        }).catch((error) => {
-        console.log(error);
-      })
+  methods: {
+    getBlogDepartments(){
+      this.$axios.get('blogDepartments?to=-1', {
+        headers:{
+          'lang': 'ar'
+        }
+      }).then((response) => {
+        this.all = response.data.data;
+        this.blog_departments_id = this.all[0].id;
+        for (var i=0; i < this.all.length; i++){
+          this.departments.push({
+            'value': this.all[i].id,
+            'text': this.lang=='ar'?this.all[i].name_ar:this.all[i].name_en
+          })
+        }
+
+      }).catch((error) => {
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: error,
+        })
+      });
     },
 
-    changeStatus(el) {
-      if (el === 'published') {
-        if (this.published) {
-          this.publishedText = "text-success";
-        } else {
-          this.publishedText = "text-muted";
-        }
-      } else if (el === 'featured') {
-        if (this.featured) {
-          this.featuredText = "text-success";
-        } else {
-          this.featuredText = "text-muted";
-        }
+    createRecord() {
+      if (!this.photo) {
+        this.imageText = "Image Is Required";
+        this.imageTextColor = "text-danger";
+      } else {
+        this.loading = true,
+          this.$axios.post(this.model + '/store', {
+            name_ar: this.name_ar,
+            name_en: this.name_en,
+            desc_ar: this.desc_ar,
+            desc_en: this.desc_en,
+            meta_title: this.meta_title,
+            meta_description: this.meta_desc,
+            active: this.published,
+            in_home: this.featured,
+            blog_departments_id: this.blog_departments_id,
+            image: this.photo
+          }).then(response => {
+            if (response.data.status === 200) {
+              this.loading = false
+              Swal.fire({
+                position: 'top-end',
+                icon: 'success',
+                title: 'Your work has been saved',
+                showConfirmButton: false,
+                timer: 1500
+              })
+              this.$router.push('/' + this.model)
+            } else {
+              this.error_message = response.data.message
+              Swal.fire({
+                position: 'top-end',
+                icon: 'error',
+                title: 'Oops...',
+                text: response.data.message,
+                showConfirmButton: true,
+                timer: 5000
+              })
+            }
+          }).catch((error) => {
+            console.log(error);
+          })
       }
     },
 
@@ -274,6 +349,15 @@ export default {
       reader.readAsDataURL(file)
     },
 
+    setMetaData(from) {
+      if (from === 1) {
+        this.meta_desc = this.name_en;
+        this.meta_title = this.name_en;
+      } else if (from === 2) {
+        this.meta_desc = this.desc_en;
+        this.meta_title = this.name_en;
+      }
+    },
 
     validate() {
       if (this.$refs.form.validate()) {

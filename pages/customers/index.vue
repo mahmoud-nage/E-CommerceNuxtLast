@@ -166,7 +166,7 @@ import Swal from "sweetalert2";
 export default {
   head() {
     return {
-      title: `${this.title} | Minton - Nuxtjs Responsive Admin Dashboard Template`,
+      title: `${this.title}`,
     };
   },
   data() {

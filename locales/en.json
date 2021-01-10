@@ -206,6 +206,7 @@
       "FlashDeals": "FlashDeals",
       "Reviews": "Reviews",
       "orders": "Orders",
+      "website": "Website",
       "list": {
         "products": "Products List",
         "productsgrid": "Products Grid",
@@ -325,6 +326,16 @@
       "text": "Notifications",
       "notifications": "Notifications List",
       "createNotification": "Create Notification"
+    },
+    "blogs": {
+      "text": "Blogs",
+      "blogs": "Blogs List",
+      "createBlog": "Create Blog"
+    },
+    "blogDepartments": {
+      "text": "Departments",
+      "departments": "Departments List",
+      "createDepartments": "Create Departments"
     },
     "messages": {
       "text": "Messages",

@@ -56,14 +56,7 @@
                   </div>
                 </template>
 
-                <template v-slot:cell(blog)="data">
-                  <img v-if="data.item.image" :src="data.item.image" alt=""
-                       class="rounded mr-3" height="48" width="48"/>
-                  <div v-if="!data.item.image" class="avatar-xs d-inline-block mr-2">
-                    <div class="avatar-title bg-soft-primary rounded-circle text-primary">
-                      <i class="mdi mdi-account-circle m-0"></i>
-                    </div>
-                  </div>
+                <template v-slot:cell(department)="data">
                   <h5 class="m-0 d-inline-block align-middle">
                     <a href="#" class="text-dark" v-if="">{{
                         lang === 'ar' ? data.item.name_ar : data.item.name_en
@@ -71,13 +64,6 @@
                   </h5>
                 </template>
 
-                <template v-slot:cell(department)="data">
-                  <h5 class="m-0 d-inline-block align-middle" v-if="data.item.department">
-                    <a href="#" class="text-dark"
-                       v-if="">{{ lang === 'ar' ? data.item.department.name_ar : data.item.name_en }}
-                      {{ data.item.department.index }}</a>
-                  </h5>
-                </template>
 
                 <!--                <template v-slot:cell(user)="data" >-->
                 <!--                  <div v-if="data.item.user">-->
@@ -190,104 +176,6 @@
 
                 </template>
 
-                <template v-slot:cell(in_home)="data">
-                  <div
-                    style="text-align: center;"
-                  >
-                    <v-icon
-                      dark
-                      right
-                      class="text-center"
-                      color="green darken-2"
-                      v-if="data.item.in_home"
-                      @click="dialog2 = true"
-                    >
-                      mdi-checkbox-marked-circle
-                    </v-icon>
-                    <v-icon
-                      dark
-                      right
-                      color="red darken-2"
-                      class="text-center"
-                      v-if="!data.item.in_home"
-                      @click="dialog2 = true"
-                    >
-                      mdi-close-circle
-                    </v-icon>
-                  </div>
-
-                  <v-row justify="center">
-                    <v-dialog
-                      :v-model="dialog2"
-                      max-width="290"
-                    >
-                      <v-card>
-                        <v-card-title class="headline">
-                          Shoe In Home Action?
-                        </v-card-title>
-
-                        <v-card-text v-if="!data.item.in_home"
-                                     color="green darken-1"
-                        >
-                          You will Show This review In Home.
-                          <div
-                            style="text-align: center;"
-                          >
-                            <v-icon
-                              x-large
-                              color="red darken-2"
-                              style="text-align: center; font-size: 75px; margin: 5px auto"
-                            > mdi-close-circle
-                            </v-icon>
-                          </div>
-                        </v-card-text>
-                        <v-card-text v-if="data.item.in_home"
-                                     color="red darken-1"
-                        >
-                          You will not Show This review In Home.
-
-                          <div
-                            style="text-align: center;"
-                          >
-                            <v-icon
-                              x-large
-                              color="green darken-2"
-                              style="text-align: center; font-size: 75px; margin: 5px auto"
-                            >
-                              mdi-check-circle-outline
-                            </v-icon>
-                          </div>
-
-                        </v-card-text>
-
-                        <v-card-actions>
-                          <v-spacer></v-spacer>
-
-                          <v-btn
-                            v-if="!data.item.in_home"
-                            color="green darken-1"
-                            text
-                            @click="changeStatus('in_home', 1, data.item.id)"
-                          >
-                            Show
-                          </v-btn>
-
-                          <v-btn
-                            v-if="data.item.in_home"
-                            color="red darken-1"
-                            text
-                            @click="changeStatus('in_home', 0, data.item.id)"
-                          >
-                            Not Show
-                          </v-btn>
-                        </v-card-actions>
-                      </v-card>
-                    </v-dialog>
-                  </v-row>
-
-
-                </template>
-
                 <template v-slot:cell(action)="data, index">
                   <ul class="list-inline table-action m-0">
                     <li class="list-inline-item">
@@ -348,7 +236,7 @@
 import Swal from "sweetalert2";
 
 /**
- * Blogs-list component
+ * blogDepartments-list component
  */
 export default {
   head() {
@@ -359,19 +247,19 @@ export default {
   data() {
     return {
       Data: {},
-      model: "blogs",
+      model: "blogDepartments",
       lang: 'ar',
-      title: "Blogs List",
+      title: "Departments List",
       dialog: false,
       dialog2: false,
       items: [{
         text: "Dashboard"
       },
         {
-          text: "Blogs"
+          text: "Departments"
         },
         {
-          text: "Blogs List",
+          text: "Departments List",
           active: true
         }
       ],
@@ -396,13 +284,13 @@ export default {
         label: ""
       },
         {
-          key: "blog",
-          label: "Blog",
+          key: "department",
+          label: "Department",
           sortable: true
         },
         {
-          key: "department",
-          label: "Department",
+          key: "blogs_count",
+          label: "countBlog",
           sortable: true
         },
         // {
@@ -411,18 +299,8 @@ export default {
         //   sortable: true
         // },
         {
-          key: "read_num",
-          label: 'countRead',
-          sortable: true
-        },
-        {
           key: "published",
           label: "Published",
-          sortable: true
-        },
-        {
-          key: "in_home",
-          label: "Show In Home",
           sortable: true
         },
         {
@@ -458,7 +336,7 @@ export default {
       this.currentPage = 1;
     },
 
-    changeStatus(type, val, id) {
+    changeStatus(type, val, id, dialog) {
       this.$axios.post(this.model + "/" + id + '/changeStatus', {
         'type': type,
         'value': val
@@ -467,7 +345,7 @@ export default {
           this.dialog = false;
           this.dialog2 = false;
           let index = this.Data.findIndex(el => {
-            return el.id == id
+            return el.id === id
           })
 
           if (response.data.status === 200) {

@@ -7,17 +7,16 @@
           <div class="card-body">
             <div class="row mb-2">
               <div class="col-sm-6">
-<!--                <b-button class="btn-rounded ml-1 text-white" variant="success" to="/ecommerce/brands/create" dark><span-->
-<!--                  class="btn-label"><i class="mdi mdi-plus"></i></span>{{ $t('Create') }}-->
-<!--                </b-button>-->
+                <!--                <b-button class="btn-rounded ml-1 text-white" variant="success" :to="`/${model}/create`" dark><span-->
+                <!--                  class="btn-label"><i class="mdi mdi-plus"></i></span>{{ $t('Create') }}-->
+                <!--                </b-button>-->
               </div>
               <div class="col-sm-6">
                 <div class="float-sm-right">
-
-                  <b-button class="btn-rounded ml-1 text-white" variant="warning" ><span
+                  <b-button class="btn-rounded ml-1 text-white" variant="warning"><span
                     class="btn-label"><i class="mdi mdi-export-variant"></i></span>{{ $t('Export') }}
                   </b-button>
-                  <b-button class="btn-rounded ml-1 text-white" variant="info" ><span
+                  <b-button class="btn-rounded ml-1 text-white" variant="info"><span
                     class="btn-label"><i class="mdi mdi-filter-menu-outline"></i></span>{{ $t('Filter') }}
                   </b-button>
                 </div>
@@ -28,7 +27,7 @@
                 <div id="tickets-table_length" class="dataTables_length">
                   <label class="d-inline-flex align-items-center">
                     Display&nbsp;
-                    <b-form-select v-model="perPage" size="sm" :options="pageOptions"></b-form-select>&nbsp;{{model}}
+                    <b-form-select v-model="perPage" size="sm" :options="pageOptions"></b-form-select>&nbsp;{{ model }}
                   </label>
                 </div>
               </div>
@@ -46,7 +45,7 @@
             </div>
             <!-- Table -->
             <div class="table-responsive mb-0">
-              <b-table table-class="table table-centered w-100" thead-tr-class="bg-light" :items="productData"
+              <b-table table-class="table table-centered w-100" thead-tr-class="bg-light" :items="Data"
                        :fields="fields" responsive="sm" :per-page="perPage" :current-page="currentPage"
                        :sort-by.sync="sortBy" :sort-desc.sync="sortDesc" :filter="filter"
                        :filter-included-fields="filterOn" @filtered="onFiltered">
@@ -58,7 +57,8 @@
                 </template>
 
                 <template v-slot:cell(product)="data">
-                  <img v-if="data.item.product.thumbnail_img" :src="data.item.product.thumbnail_img" alt="" class="rounded mr-3" height="48"/>
+                  <img v-if="data.item.product.thumbnail_img" :src="data.item.product.thumbnail_img" alt=""
+                       class="rounded mr-3" height="48"/>
                   <div v-if="!data.item.product.thumbnail_img" class="avatar-xs d-inline-block mr-2">
                     <div class="avatar-title bg-soft-primary rounded-circle text-primary">
                       <i class="mdi mdi-account-circle m-0"></i>
@@ -69,9 +69,9 @@
                   </h5>
                 </template>
 
-
                 <template v-slot:cell(owner)="data">
-                  <img v-if="data.item.product.user.avatar" :src="data.item.product.user.avatar" alt="" class="rounded mr-3" height="48" />
+                  <img v-if="data.item.product.user.avatar" :src="data.item.product.user.avatar" alt=""
+                       class="rounded mr-3" height="48"/>
                   <div v-if="!data.item.product.user.avatar" class="avatar-xs d-inline-block mr-2">
                     <div class="avatar-title bg-soft-primary rounded-circle text-primary">
                       <i class="mdi mdi-account-circle m-0"></i>
@@ -83,7 +83,8 @@
                 </template>
 
                 <template v-slot:cell(customer)="data">
-                  <img v-if="data.item.user.avatar" :src="data.item.user.avatar" alt="" class="rounded mr-3" height="48" />
+                  <img v-if="data.item.user.avatar" :src="data.item.user.avatar" alt="" class="rounded mr-3"
+                       height="48"/>
                   <div v-if="!data.item.user.avatar" class="avatar-xs d-inline-block mr-2">
                     <div class="avatar-title bg-soft-primary rounded-circle text-primary">
                       <i class="mdi mdi-account-circle m-0"></i>
@@ -94,35 +95,287 @@
                   </h5>
                 </template>
 
-                <template v-slot:cell(Published)="data">
-                  <span class="badge badge-soft-success" :class="{'badge-soft-danger': data.item.status === 'Deactive'}">{{ data.item.status }}</span>
+                <template v-slot:cell(published)="data">
+                  <div style="text-align: center;">
+                    <v-icon
+                      dark
+                      right
+                      class="text-center"
+                      color="green darken-2"
+                      v-if="data.item.active"
+                      @click="dialog = true"
+                    >
+                      mdi-checkbox-marked-circle
+                    </v-icon>
+                    <v-icon
+                      dark
+                      right
+                      color="red darken-2"
+                      class="text-center"
+                      v-if="!data.item.active"
+                      @click="dialog = true"
+                    >
+                      mdi-close-circle
+                    </v-icon>
+                  </div>
+
+                  <v-row justify="center">
+                    <v-dialog
+                      v-model="dialog"
+                      max-width="290"
+                    >
+                      <v-card>
+                        <v-card-title class="headline">
+                          Published Action?
+                        </v-card-title>
+
+                        <v-card-text v-if="!data.item.active"
+                                     color="green darken-1"
+                        >
+                          You will Published This review.
+                          <div
+                            style="text-align: center;"
+                          >
+                            <v-icon
+                              x-large
+                              color="red darken-2"
+                              style="text-align: center; font-size: 75px; margin: 5px auto"
+                            > mdi-close-circle
+                            </v-icon>
+                          </div>
+                        </v-card-text>
+                        <v-card-text v-if="data.item.active"
+                                     color="red darken-1"
+                        >
+                          You will Un Published This review.
+
+                          <div
+                            style="text-align: center;"
+                          >
+                            <v-icon
+                              x-large
+                              color="green darken-2"
+                              style="text-align: center; font-size: 75px; margin: 5px auto"
+                            >
+                              mdi-check-circle-outline
+                            </v-icon>
+                          </div>
+
+                        </v-card-text>
+
+                        <v-card-actions>
+                          <v-spacer></v-spacer>
+
+                          <v-btn
+                            v-if="!data.item.active"
+                            color="green darken-1"
+                            text
+                            @click="changeStatus('active', 1, data.item.id)"
+                          >
+                            Published
+                          </v-btn>
+
+                          <v-btn
+                            v-if="data.item.active"
+                            color="red darken-1"
+                            text
+                            @click="changeStatus('active', 0, data.item.id)"
+                          >
+                            Not Published
+                          </v-btn>
+                        </v-card-actions>
+                      </v-card>
+                    </v-dialog>
+                  </v-row>
+
+
+                </template>
+
+                <template v-slot:cell(in_home)="data">
+                  <div
+                    style="text-align: center;"
+                  >
+                    <v-icon
+                      dark
+                      right
+                      class="text-center"
+                      color="green darken-2"
+                      v-if="data.item.in_home"
+                      @click="dialog2 = true"
+                    >
+                      mdi-checkbox-marked-circle
+                    </v-icon>
+                    <v-icon
+                      dark
+                      right
+                      color="red darken-2"
+                      class="text-center"
+                      v-if="!data.item.in_home"
+                      @click="dialog2 = true"
+                    >
+                      mdi-close-circle
+                    </v-icon>
+                  </div>
+
+                  <v-row justify="center">
+                    <v-dialog
+                      v-model="dialog2"
+                      max-width="290"
+                    >
+                      <v-card>
+                        <v-card-title class="headline">
+                          Shoe In Home Action?
+                        </v-card-title>
+
+                        <v-card-text v-if="!data.item.in_home"
+                                     color="green darken-1"
+                        >
+                          You will Show This review In Home.
+                          <div
+                            style="text-align: center;"
+                          >
+                            <v-icon
+                              x-large
+                              color="red darken-2"
+                              style="text-align: center; font-size: 75px; margin: 5px auto"
+                            > mdi-close-circle
+                            </v-icon>
+                          </div>
+                        </v-card-text>
+                        <v-card-text v-if="data.item.in_home"
+                                     color="red darken-1"
+                        >
+                          You will not Show This review In Home.
+
+                          <div
+                            style="text-align: center;"
+                          >
+                            <v-icon
+                              x-large
+                              color="green darken-2"
+                              style="text-align: center; font-size: 75px; margin: 5px auto"
+                            >
+                              mdi-check-circle-outline
+                            </v-icon>
+                          </div>
+
+                        </v-card-text>
+
+                        <v-card-actions>
+                          <v-spacer></v-spacer>
+
+                          <v-btn
+                            v-if="!data.item.in_home"
+                            color="green darken-1"
+                            text
+                            @click="changeStatus('in_home', 1, data.item.id)"
+                          >
+                            Show
+                          </v-btn>
+
+                          <v-btn
+                            v-if="data.item.in_home"
+                            color="red darken-1"
+                            text
+                            @click="changeStatus('in_home', 0, data.item.id)"
+                          >
+                            Not Show
+                          </v-btn>
+                        </v-card-actions>
+                      </v-card>
+                    </v-dialog>
+                  </v-row>
+
+
                 </template>
 
                 <template v-slot:cell(rating)="data">
                                 <span class="badge" :class="{
-                      'badge-success': data.item.rating >= 4,
-                      'badge-danger': data.item.rating < 3,
+                      'badge-success': data.item.rate >= 4,
+                      'badge-danger': data.item.rate < 3,
                       'badge-warning':
-                        data.item.rating > 3 && data.item.rating < 4
+                        data.item.rate > 3 && data.item.rate < 4
                     }"><i class="mdi mdi-star"></i> {{ data.item.rate }}</span>
                 </template>
 
-                <template v-slot:cell(action)>
+                <template v-slot:cell(comment)="data">
+                  <span> {{ data.item.comment.substring(0, 10) }}
+                  <v-icon color="green darken-1" @click="dialog3 = true">
+                    mdi-lastpass
+                  </v-icon>
+                  </span>
+                  <v-row justify="center">
+                    <v-dialog
+                      v-model="dialog3"
+                      width="600px"
+                    >
+                      <v-card>
+                        <v-card-title>
+                          <span class="headline">Comment</span>
+                        </v-card-title>
+                        <v-card-text>
+                          {{ data.item.comment }}
+                        </v-card-text>
+                        <v-card-actions>
+                          <v-spacer></v-spacer>
+                          <v-btn
+                            color="red darken-1"
+                            text
+                            @click="dialog3 = false"
+                          >
+                            Cancel
+                          </v-btn>
+                        </v-card-actions>
+                      </v-card>
+                    </v-dialog>
+                  </v-row>
+                </template>
+
+                <template v-slot:cell(action)="data, index">
                   <ul class="list-inline table-action m-0">
+                    <!--                    <li class="list-inline-item">-->
+                    <!--                      <NuxtLink-->
+                    <!--                        :to="`${model}/${data.item.id}/view`"-->
+                    <!--                        class="action-icon text-primary"><i class="mdi mdi-eye"></i></NuxtLink>-->
+                    <!--                    </li>-->
                     <li class="list-inline-item">
-                      <a href="javascript:void(0);" class="action-icon">
+                      <a href="javascript:void(0);" @click="removeRecord(data.index, data.item.id)"
+                         class="action-icon text-danger">
                         <i class="mdi mdi-delete"></i></a>
                     </li>
                   </ul>
                 </template>
+
               </b-table>
             </div>
-            <div class="row">
+            <div class="row" v-if="this.totalRows > this.perPage">
               <div class="col">
                 <div class="dataTables_paginate paging_simple_numbers float-right">
-                  <ul class="pagination pagination-rounded">
-                    <!-- pagination -->
-                    <b-pagination v-model="currentPage" :total-rows="rows" :per-page="perPage"></b-pagination>
+                  <ul class="pagination rounded">
+                    <li>
+                      <a href="#" class="btn btn-icon btn-sm btn-light mr-2 my-1" :class="prev ? 'disabled' : ''"
+                         @click="prevStep">
+                        &laquo;
+                      </a>
+                    </li>
+                    <li v-for="c in count2">
+                      <a href="#" :class="current_page === c ? 'active' : ''"
+                         class="btn btn-icon btn-sm border-0 btn-light mr-2 my-1"
+                         @click.prevent="getData(c)">{{ c }}</a>
+                    </li>
+
+                    <li>
+                      <a href="#" :class="next ? 'disabled' : ''" class="btn btn-icon btn-sm btn-light mr-2 my-1"
+                         @click="nextStep">
+                        &raquo;
+                      </a>
+                    </li>
+                    <div style="margin:auto;text-align: left;">
+                      <ul class="pagination">
+                        <li class="page-item active"><a class="page-link">Total {{ rows }}</a></li>
+                      </ul>
+                    </div>
+
                   </ul>
                 </div>
               </div>
@@ -135,9 +388,6 @@
 </template>
 
 <script>
-import {
-  productData
-} from "./data";
 import Swal from "sweetalert2";
 
 /**
@@ -146,15 +396,18 @@ import Swal from "sweetalert2";
 export default {
   head() {
     return {
-      title: `${this.title} | Minton - Nuxtjs Responsive Admin Dashboard Template`,
+      title: `${this.title}`,
     };
   },
   data() {
     return {
       Data: {},
       model: "reviews",
-      lang:'ar',
+      lang: 'ar',
       title: "Reviews List",
+      dialog: false,
+      dialog2: false,
+      dialog3: false,
       items: [{
         text: "Dashboard"
       },
@@ -168,7 +421,6 @@ export default {
       ],
 
       pagination: {},
-      dialog: false,
       count2: [],
       stepIndex: '',
       next: false,
@@ -203,18 +455,26 @@ export default {
         },
         {
           key: "comment",
+          label: "Comment",
           sortable: true
         },
         {
-          key: "Rating",
+          key: "rating",
+          label: 'Rating',
           sortable: true
         },
         {
-          key: "Published",
+          key: "published",
+          label: "Published",
           sortable: true
         },
         {
-          key: "date",
+          key: "in_home",
+          label: "Show In Home",
+          sortable: true
+        },
+        {
+          key: "created_at",
           label: "Added Date",
           sortable: true
         },
@@ -246,6 +506,41 @@ export default {
       this.currentPage = 1;
     },
 
+    changeStatus(type, val, id, dialog) {
+      this.$axios.post(this.model + "/" + id + '/changeStatus', {
+        'type': type,
+        'value': val
+      })
+        .then(response => {
+          this.dialog = false;
+          this.dialog2 = false;
+          let index = this.Data.findIndex(el => {
+            return el.id === id
+          })
+
+          if (response.data.status === 200) {
+            this.Data[index][type] = val;
+            console.log(response);
+            Swal.fire({
+              position: 'top-end',
+              icon: 'success',
+              title: response.data.message,
+              showConfirmButton: false,
+              timer: 1500
+            })
+          } else {
+            Swal.fire({
+              position: 'top-end',
+              icon: 'danger',
+              title: response.data.message,
+              showConfirmButton: false,
+              timer: 1500
+            })
+          }
+
+        })
+    },
+
     removeRecord(index, id) {
       Swal.fire({
         title: "Are you sure?",
@@ -259,9 +554,9 @@ export default {
         buttonsStyling: false,
       }).then((result) => {
         if (result.value) {
-          this.$axios.delete(this.model+ "/" + id + '/destroy')
+          this.$axios.delete(this.model + "/" + id + '/destroy')
             .then(response => {
-              this.productData.splice(index, 1)
+              this.Data.splice(index, 1)
               Swal.fire({
                 position: 'top-end',
                 icon: 'success',
@@ -281,14 +576,15 @@ export default {
       });
     },
 
-    getData(page){
+    getData(page) {
       console.log(this.perPage);
-      this.$axios.get(this.model+'?page='+page+'&to='+this.perPage, {
-        headers:{
+      this.$axios.get(this.model + '?page=' + page + '&to=' + this.perPage, {
+        headers: {
           'lang': 'ar'
         }
       }).then((response) => {
-        this.productData = response.data.data.data;
+        console.log(response.data.data.data[0].product);
+        this.Data = response.data.data.data;
         this.totalRows = response.data.data.total;
         this.perPage = response.data.data.per_page;
         this.current_page = response.data.data.current_page;
